@@ -1,46 +1,83 @@
 package com.example.atry
 
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.atry.ui.theme.TryTheme
 
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
 
-                    Column() {
 
-                        topic_element( "Resources",  Modifier.fillMaxSize())
-                        topic_element( "Tasks",  Modifier.fillMaxSize())
+            LazyColumn() {
+                itemsIndexed(
+                    listOf<cardStructure>(
+                        cardStructure("Recources", {Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                        cardStructure("Tasks", {Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                    cardStructure("Setting", {Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                    cardStructure("Account", {Icon(Icons.Filled.Person,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                    cardStructure("FAQ", {Icon(Icons.Filled.Search,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}))
 
-                    }
+                ) { index, item ->
+                    cardElement(item.get_title(), Modifier.fillMaxSize(),item.get_icon())
+                }
+//                itemsIndexed(
+//                    Array({"hi",41},{""})
+//                )
 
 
+            }
         }
     }
 }
+
+class cardStructure(val title: String, icon: @Composable() () -> Unit){
+
+     val item_title = title
+     val item_icon = icon
+
+    fun get_title(): String{
+
+        return item_title
+    }
+
+    fun get_icon(): @Composable() () -> Unit{
+        return item_icon
+    }
+
+
+}
+
+
 @ExperimentalMaterialApi
 @Composable
-fun topic_element( title:String, modifier: Modifier = Modifier){
+fun cardElement( title:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
 
     Card(
         modifier = Modifier
@@ -52,50 +89,46 @@ fun topic_element( title:String, modifier: Modifier = Modifier){
 
     ) {
         Row(
-            modifier = Modifier.padding(30.dp),
+            modifier = Modifier.padding(50.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 buildAnnotatedString {
 //                    append("welcome to ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.W900, color = Color(0xFF4552B8))
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 25.sp)
                     ) {
                         append(title)
                     }
                 }
             )
+            icon_shape()
 
-            Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8))
-//
+
         }
     }
 
-//    Button(
-//        modifier = Modifier.background(Color.Yellow),
-//        onClick = { /* ... */ },
-//        // Uses ButtonDefaults.ContentPadding by default
-//        contentPadding = PaddingValues(
-//            start = 20.dp,
-//            top = 12.dp,
-//            end = 20.dp,
-//            bottom = 12.dp
-//        )
-//    ) {
-//
-//        Text(name)
-//    }
+
 }
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
 
+//@ExperimentalMaterialApi
 //@Preview(showBackground = true)
 //@Composable
 //fun DefaultPreview() {
-//    TryTheme {
-//        Greeting("Android")
+//
+//    LazyColumn() {
+//        itemsIndexed(
+//            listOf("Recources", "Tasks", "Setting", "Account", "FAQ")
+//
+//        ) { index, string ->
+//            cardElement(string, Modifier.fillMaxSize())
+//        }
+//
+//
 //    }
 //}
 
