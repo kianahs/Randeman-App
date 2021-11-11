@@ -2,6 +2,7 @@ package com.example.atry
 
 import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.util.Size
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -22,6 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.geometry.CornerRadius.Companion.Zero
+import androidx.compose.ui.geometry.Offset.Companion.Zero
+import androidx.compose.ui.geometry.Rect.Companion.Zero
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
@@ -45,39 +49,125 @@ class MainActivity : ComponentActivity() {
 //            loginScreen()
 //            featuresScreen()
 //            resourceFrom()
-
+            taskForm()
 
         }
     }
 }
+@Composable
+fun taskForm(){
+
+//    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
+//    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val shape = RoundedCornerShape(topStart = 80.dp)
+    Column(modifier = Modifier.background(Color(0xFF4552B8))) {
+
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.1f)
+            .background(Color(0xFF4552B8))
+        ){
+            Row(modifier= Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
+//                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
+
+            }
+        }
+
+        Box(modifier = Modifier
+            .clip(shape)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Row(){
+                    Text(
+                        buildAnnotatedString {
+//                    append("welcome to ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                            ) {
+                                append("Add task")
+                            }
+                        }
+                    )
+                    Icon(Icons.Filled.CheckCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(50.dp))
+
+
+                }
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Task name",true)
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Duration", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "priority", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Resource", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))
+
+
+            }
+
+        }
+
+
+
+    }
+
+
+
+}
+
 
 @Composable
 fun resourceFrom() {
 
-    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
-    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+//    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
+//    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
     val shape = RoundedCornerShape(topStart = 80.dp)
     Column(modifier = Modifier.background(Color(0xFF4552B8))) {
 
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.35f).background(Color(0xFF4552B8))
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.35f)
+            .background(Color(0xFF4552B8))
             )
 
-        Box(modifier = Modifier.clip(shape).fillMaxWidth().fillMaxHeight().background(Color.White)
+        Box(modifier = Modifier
+            .clip(shape)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
             ){
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    buildAnnotatedString {
+                Row(){
+                    Text(
+                        buildAnnotatedString {
 //                    append("welcome to ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
-                        ) {
-                            append("Add resource!")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                            ) {
+                                append("Add resource ")
+                            }
                         }
-                    }
-                )
+                    )
+                    Icon(Icons.Filled.Create,"",tint = Color(0xFF4552B8),modifier = Modifier.size(50.dp))
+
+                }
+
+
                 Spacer(modifier = Modifier.padding(15.dp))
                 textInput(textFieldName = "Resource name",true)
                 Spacer(modifier = Modifier.padding(5.dp))
@@ -99,8 +189,8 @@ fun resourceFrom() {
 @Composable
 fun loginScreen(){
 
-    val usernameState = remember { mutableStateOf(TextFieldValue()) }
-    val passwordState = remember { mutableStateOf(TextFieldValue()) }
+//    val usernameState = remember { mutableStateOf(TextFieldValue()) }
+//    val passwordState = remember { mutableStateOf(TextFieldValue()) }
 
     Column(
         modifier = Modifier.fillMaxSize(),

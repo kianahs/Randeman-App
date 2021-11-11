@@ -86,17 +86,23 @@ class Resource (val resource_name: String, val resource_description: String){
 }
 
 
-class Task (val task_name: String, val task_ID: Int, val task_duration: Int, val task_priority: Int ){
+class Task (val task_name: String,  val task_duration: Int, val task_priority: Int, val task_resource:Resource ){
 
     val name = task_name
-    val ID = task_ID
     val duration = task_duration
     val priority = task_priority
+    val resource = task_resource
 
     fun get_task_priority(): Int{
 
         return priority
     }
+
+    fun get_task_resource(): Resource{
+
+        return resource
+    }
+
     fun get_task_name(): String{
         return name
     }
