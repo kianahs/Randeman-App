@@ -35,7 +35,8 @@ fun add_new_resource(conn:Connection, name: String, description: String){
 }
 
 
-fun get_all_resources(conn: Connection): MutableList<Resource>{
+fun get_all_resources(): MutableList<Resource>{
+    var conn = connectToDataBase()
 
     val allResources: MutableList<Resource> = ArrayList()
 
@@ -51,39 +52,12 @@ fun get_all_resources(conn: Connection): MutableList<Resource>{
         allResources.add(new_resource)
 
     }
-
+    conn.close()
     return allResources
 
 }
 
-class Resource (val resource_name: String, val resource_description: String){
 
-    val tasks_list: MutableList<Task> = ArrayList()
-    val name = resource_name
-    val description = resource_description
-
-    fun assign_task_to_resource(task: Task){
-
-        tasks_list.add(task)
-    }
-
-    fun sort_tasks_by_priorities(){
-
-        tasks_list.sortByDescending { task -> task.get_task_priority() }
-
-        for(task in tasks_list){
-            print(task)
-        }
-
-
-    }
-
-    override fun toString(): String {
-        return "Resource(name='$name', description='$description')"
-    }
-
-
-}
 
 
 class Task (val task_name: String, val task_ID: Int, val task_duration: Int, val task_priority: Int ){
@@ -111,7 +85,7 @@ class Task (val task_name: String, val task_ID: Int, val task_duration: Int, val
 fun main(){
 
 
-    print(get_all_resources(connectToDataBase()))
+//    print(get_all_resources(connectToDataBase()))
 //
 //
 //
