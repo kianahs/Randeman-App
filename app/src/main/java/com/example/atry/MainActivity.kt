@@ -20,6 +20,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
@@ -40,12 +42,58 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            loginScreen()
+//            loginScreen()
 //            featuresScreen()
+//            resourceFrom()
 
 
         }
     }
+}
+
+@Composable
+fun resourceFrom() {
+
+    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
+    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val shape = RoundedCornerShape(topStart = 80.dp)
+    Column(modifier = Modifier.background(Color(0xFF4552B8))) {
+
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.35f).background(Color(0xFF4552B8))
+            )
+
+        Box(modifier = Modifier.clip(shape).fillMaxWidth().fillMaxHeight().background(Color.White)
+            ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    buildAnnotatedString {
+//                    append("welcome to ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                        ) {
+                            append("Add resource!")
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Resource name",true)
+                Spacer(modifier = Modifier.padding(5.dp))
+                textInput(textFieldName = "Description", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))
+
+
+            }
+
+        }
+
+
+
+    }
+
 }
 
 @Composable
@@ -75,10 +123,10 @@ fun loginScreen(){
         Spacer(modifier = Modifier.padding(15.dp))
         Button(onClick = { /*TODO*/ }) {
             Text(text = "Login")
-            
+
         }
-        
-        
+
+
     }
    
 
@@ -190,5 +238,5 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
 
-   loginScreen()
+   resourceFrom()
 }
