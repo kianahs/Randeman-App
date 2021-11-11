@@ -1,10 +1,10 @@
 package com.example.atry
 
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.util.Size
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,7 +27,7 @@ import androidx.compose.ui.geometry.CornerRadius.Companion.Zero
 import androidx.compose.ui.geometry.Offset.Companion.Zero
 import androidx.compose.ui.geometry.Rect.Companion.Zero
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -38,18 +38,37 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.atry.ui.theme.TryTheme
+
+import java.sql.*
+import java.util.*
+import com.example.atry.*
+import kotlin.collections.ArrayList
+
+val arrayList = ArrayList<Resource>()
 
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arrayList.add(Resource("CNC1","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
+        arrayList.add(Resource("CNC2","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
+        arrayList.add(Resource("CNC3","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
+        arrayList.add(Resource("CNC4","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem "))
 
         setContent {
+
+
+            resourcesScreen(arrayList)
+
 //            loginScreen()
 //            featuresScreen()
+
 //            resourceFrom()
-            taskForm()
+//            taskForm()
+
+//            resourceFrom()
+
+
 
         }
     }
@@ -263,7 +282,15 @@ fun featuresScreen (){
 
 }
 
-
+@ExperimentalMaterialApi
+@Composable
+fun resourcesScreen(resources: List<Resource>){
+    LazyColumn(){
+        itemsIndexed(resources){index, item ->
+            resourceCard(item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
+        }
+    }
+}
 
 class cardStructure(val title: String, icon: @Composable() () -> Unit){
 
@@ -282,7 +309,62 @@ class cardStructure(val title: String, icon: @Composable() () -> Unit){
 
 }
 
+@ExperimentalMaterialApi
+@Composable
+fun resourceCard( resourceName:String,description:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
 
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+            .clickable { },
+        elevation = 10.dp,
+        shape = RoundedCornerShape(15.dp),
+        backgroundColor = Color(0xFFE3DFDC)
+
+
+    ) {
+        Image(painter = painterResource(id = R.drawable.resource), contentDescription = null)
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                modifier = Modifier.padding(20.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    buildAnnotatedString {
+//                    append("welcome to ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 25.sp)
+                        ) {
+                            append(resourceName)
+                        }
+                    }
+                )
+
+
+
+
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(buildAnnotatedString {
+//                    append("welcome to ")
+                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8))
+                ) {
+                    append("Discription:\n")
+                }
+                withStyle(style = SpanStyle(color = Color.Gray)
+                ) {
+                    append(description)
+                }
+            })
+        }
+
+
+    }
+
+
+}
 @ExperimentalMaterialApi
 @Composable
 fun cardElement( title:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
@@ -329,4 +411,5 @@ fun Greeting(name: String) {
 fun DefaultPreview() {
 
    resourceFrom()
+
 }
