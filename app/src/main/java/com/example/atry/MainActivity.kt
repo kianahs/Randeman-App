@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +25,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,29 +40,92 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            loginScreen()
+//            featuresScreen()
 
 
-            LazyColumn() {
-                itemsIndexed(
-                    listOf<cardStructure>(
-                        cardStructure("Recources", {Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
-                        cardStructure("Tasks", {Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
-                    cardStructure("Setting", {Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
-                    cardStructure("Account", {Icon(Icons.Filled.Person,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
-                    cardStructure("FAQ", {Icon(Icons.Filled.Search,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}))
-
-                ) { index, item ->
-                    cardElement(item.get_title(), Modifier.fillMaxSize(),item.get_icon())
-                }
-//                itemsIndexed(
-//                    Array({"hi",41},{""})
-//                )
-
-
-            }
         }
     }
 }
+
+@Composable
+fun loginScreen(){
+
+    val usernameState = remember { mutableStateOf(TextFieldValue()) }
+    val passwordState = remember { mutableStateOf(TextFieldValue()) }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            buildAnnotatedString {
+//                    append("welcome to ")
+                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 50.sp)
+                ) {
+                    append("Welcome !")
+                }
+            }
+        )
+        Spacer(modifier = Modifier.padding(15.dp))
+        textInput(textFieldName = "Username",true)
+        Spacer(modifier = Modifier.padding(5.dp))
+        textInput(textFieldName = "Password", false)
+        Spacer(modifier = Modifier.padding(15.dp))
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "Login")
+            
+        }
+        
+        
+    }
+   
+
+
+}
+@Composable
+fun textInput(textFieldName: String, show: Boolean ) {
+    var textState by rememberSaveable { mutableStateOf("") }
+    if (show) {
+        TextField(
+            value = textState,
+            onValueChange = { textState = it },
+            label = { Text("Enter $textFieldName") }
+        )
+    }else{
+        TextField(
+            value = textState,
+            onValueChange = { textState = it },
+            label = { Text("Enter $textFieldName") },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        )
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun featuresScreen (){
+
+    LazyColumn() {
+        itemsIndexed(
+            listOf<cardStructure>(
+                cardStructure("Resources", {Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                cardStructure("Tasks", {Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                cardStructure("Setting", {Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                cardStructure("Account", {Icon(Icons.Filled.Person,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}),
+                cardStructure("FAQ", {Icon(Icons.Filled.Search,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))}))
+
+        ) { index, item ->
+            cardElement(item.get_title(), Modifier.fillMaxSize(),item.get_icon())
+        }
+
+    }
+
+}
+
+
 
 class cardStructure(val title: String, icon: @Composable() () -> Unit){
 
@@ -115,22 +185,13 @@ fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
 
-//@ExperimentalMaterialApi
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//
-//    LazyColumn() {
-//        itemsIndexed(
-//            listOf("Recources", "Tasks", "Setting", "Account", "FAQ")
-//
-//        ) { index, string ->
-//            cardElement(string, Modifier.fillMaxSize())
-//        }
-//
-//
-//    }
-//}
+@ExperimentalMaterialApi
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+
+   loginScreen()
+}
 
 class Resource (val resource_name: String, val resource_ID: Int){
 
