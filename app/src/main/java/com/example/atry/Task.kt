@@ -21,6 +21,11 @@ class Task (val task_name: String,  val task_duration: Int, val task_priority: I
         return name
     }
 
+    fun get_task_duration(): Int{
+        return duration
+    }
+
+
     override fun toString(): String {
         return "Task(task_name='$task_name')"
     }

@@ -47,7 +47,6 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
-
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
@@ -114,8 +113,175 @@ fun Navigation(){
             resourceFrom(navController = navController)
 
         }
+        composable(
+            route = Screen.tasksScreen.route
+
+        ){
+            tasksScreen(navController = navController)
+
+        }
+        composable(
+            route = Screen.taskFormScreen.route
+
+        ){
+            taskForm(navController = navController)
+
+        }
 
     }
+
+}
+
+@Composable
+fun taskForm(navController : NavController){
+
+//    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
+//    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val shape = RoundedCornerShape(topStart = 80.dp)
+    Column(modifier = Modifier.background(Color(0xFF4552B8))) {
+
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.1f)
+            .background(Color(0xFF4552B8))
+        ){
+            Row(modifier= Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
+//                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
+
+            }
+        }
+
+        Box(modifier = Modifier
+            .clip(shape)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Row(){
+                    Text(
+                        buildAnnotatedString {
+//                    append("welcome to ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                            ) {
+                                append("Add task")
+                            }
+                        }
+                    )
+                    Icon(Icons.Filled.CheckCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(50.dp))
+
+
+                }
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Task name",true)
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Duration", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "priority", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Resource", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)
+                    .clickable { navController.navigate(Screen.tasksScreen.route) }) //bayad eslah she be safeye resourcei ke azash umade
+
+
+            }
+
+        }
+
+
+
+    }
+
+
+
+}
+
+
+@ExperimentalMaterialApi
+@Composable
+fun tasksScreen(navController: NavController){
+
+    LazyColumn(){
+
+        itemsIndexed(
+           listOf(Task("refactor",50,500,Resource("CNC","Nothing")),
+               Task("check",50,500,Resource("CNC","Nothing")),
+               Task("repair",50,500,Resource("CNC","Nothing")),
+               Task("run",50,500,Resource("CNC","Nothing"))
+           )
+        ){index, item ->
+            taskCard(modifier = Modifier,task = item )
+        }
+    }
+    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
+        Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
+            modifier = Modifier.size(80.dp).clickable {  navController.navigate(Screen.taskFormScreen.route)})
+    }
+
+
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun taskCard(  modifier: Modifier = Modifier, task: Task){
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable { },
+        elevation = 10.dp,
+        shape = RoundedCornerShape(50.dp),
+        backgroundColor = Color(0xFFFFFACA)
+
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(Modifier.padding(top=20.dp)) {
+                Text(
+                    buildAnnotatedString {
+//                    append("welcome to ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color.Black, fontSize = 20.sp)
+                        ) {
+                            append(task.get_task_name())
+                        }
+                    }
+                )
+
+                Text(buildAnnotatedString {
+//                    append("welcome to ")
+
+                    withStyle(style = SpanStyle(color = Color.Gray, fontSize = 10.sp),
+
+                        ) {
+                        append("Resource:"+task.get_task_resource().resource_name+"\n")
+                        append("Priority:"+task.get_task_priority().toString()+"\n")
+                        append("Duration:"+task.get_task_duration().toString()+"\n")
+                    }
+                })
+            }
+            Column() {
+                Image(painter = painterResource(id = R.drawable.task), contentDescription = null ,Modifier.size(80.dp))
+            }
+        }
+
+    }
+
 
 }
 
@@ -266,7 +432,7 @@ fun resourcesScreen( navController: NavController,featureChoice:String?){
     )
     LazyColumn(){
         itemsIndexed(posts.value){index, item ->
-            resourceCard(item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
+            resourceCard(navController = navController,item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
         }
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
@@ -280,13 +446,13 @@ fun resourcesScreen( navController: NavController,featureChoice:String?){
 
 @ExperimentalMaterialApi
 @Composable
-fun resourceCard( resourceName:String,description:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
+fun resourceCard( navController: NavController,resourceName:String,description:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { },
+            .clickable { navController.navigate(Screen.tasksScreen.route)},
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(0xFFE3DFDC)
