@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,11 +39,14 @@ import androidx.compose.ui.unit.sp
 import java.sql.*
 import java.util.*
 import com.example.atry.*
+import com.plcoding.ktorclientandroid.data.remote.PostsService
+import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import kotlin.collections.ArrayList
 
 val arrayList = ArrayList<Resource>()
 
 class MainActivity : ComponentActivity() {
+
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,14 +56,7 @@ class MainActivity : ComponentActivity() {
         arrayList.add(Resource("CNC4","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem "))
 
         setContent {
-
-
-//            resourcesScreen(arrayList)
-
-//            loginScreen()
-//            featuresScreen()
-            resourceFrom()
-
+            resourcesScreen()
 
 
         }
@@ -74,10 +71,17 @@ fun resourceFrom() {
     val shape = RoundedCornerShape(topStart = 80.dp)
     Column(modifier = Modifier.background(Color(0xFF4552B8))) {
 
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.35f).background(Color(0xFF4552B8))
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.35f)
+            .background(Color(0xFF4552B8))
             )
 
-        Box(modifier = Modifier.clip(shape).fillMaxWidth().fillMaxHeight().background(Color.White)
+        Box(modifier = Modifier
+            .clip(shape)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
             ){
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -190,9 +194,16 @@ fun featuresScreen (){
 
 @ExperimentalMaterialApi
 @Composable
-fun resourcesScreen(resources: List<Resource>){
+fun resourcesScreen(){
+    val service = PostsService.create()
+    val posts = produceState<List<PostResponse>>(
+        initialValue = emptyList(),
+        producer = {
+            value = service.getPosts()
+        }
+    )
     LazyColumn(){
-        itemsIndexed(resources){index, item ->
+        itemsIndexed(posts.value){index, item ->
             resourceCard(item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
         }
     }
@@ -233,7 +244,8 @@ fun resourceCard( resourceName:String,description:String, modifier: Modifier = M
         Image(painter = painterResource(id = R.drawable.resource), contentDescription = null)
         Column(modifier = Modifier.padding(20.dp)) {
             Row(
-                modifier = Modifier.padding(20.dp)
+                modifier = Modifier
+                    .padding(20.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.SpaceBetween
