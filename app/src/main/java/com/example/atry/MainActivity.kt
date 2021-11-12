@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
 //            loginScreen()
   //          featuresScreen()
 //            resourceFrom()
-//            accountForm()
+            accountForm()
         }
     }
 }
