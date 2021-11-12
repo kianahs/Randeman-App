@@ -1,25 +1,23 @@
 package com.example.atry
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -83,6 +81,99 @@ fun Navigation(){
             resourcesScreen(arrayList,featureChoice= entry.arguments?.getString("title") )
 
         }
+        composable(
+            route = Screen.accountFormScreen.route + "/{title}",
+            arguments = listOf(
+                navArgument("title"){
+                    type = NavType.StringType
+                    defaultValue = " "
+                    nullable = true
+
+                }
+            )
+        ){entry ->
+            accountForm(featureChoice= entry.arguments?.getString("title") )
+
+        }
+
+    }
+
+}
+
+
+
+@Composable
+fun accountForm(featureChoice: String?) {
+    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
+    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val shape = RoundedCornerShape(topStart = 80.dp)
+    val shape2 = CircleShape
+    Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.10f).background(Color(0xFF4552B8))
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
+                            )
+                        ) {
+                            append("Edit Profile")
+                        }
+                    }
+                )
+            }
+        }
+        Box(modifier = Modifier.clip(shape).fillMaxWidth().fillMaxHeight().background(Color.White)
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(modifier =Modifier.size(120.dp).fillMaxHeight(10f).clip(shape2).background(Color.Gray)
+                ){
+
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Icon(Icons.Filled.Person,"",tint = Color(0xFFA3ACEE),modifier = Modifier.size(120.dp))
+
+                }
+
+                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.20f).background(Color.White)
+
+                ){
+                    Column(
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.4f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Icon(Icons.Filled.AddCircle,"photo",tint = Color(0xFFB9BDDA),modifier = Modifier.size(40.dp))
+
+
+                    }
+                }
+                textInput(textFieldName = "Your name", true)
+                Spacer(modifier = Modifier.padding(5.dp))
+                textInput(textFieldName = "Username",true)
+                Spacer(modifier = Modifier.padding(5.dp))
+                textInput(textFieldName = "Password", false)
+                Spacer(modifier = Modifier.padding(5.dp))
+                textInput(textFieldName = "Company name", true)
+                Spacer(modifier = Modifier.padding(15.dp))
+                Icon(Icons.Outlined.CheckCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(40.dp))
+
+
+            }
+
+        }
+
+
 
     }
 
@@ -252,8 +343,16 @@ fun cardElement( title:String, modifier: Modifier = Modifier, icon_shape: @Compo
             .clickable { },
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
+
         onClick = {
-           navController.navigate(Screen.resourcesScreen.withArgs(title))
+            when(title){
+
+                "Account" -> navController.navigate(Screen.accountFormScreen.withArgs(title))
+                "Resources" -> navController.navigate(Screen.resourcesScreen.withArgs(title))
+
+
+            }
+
         }
 
     ) {
