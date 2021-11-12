@@ -3,16 +3,25 @@ package com.example.atry
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.CheckCircle
+
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -27,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -35,6 +45,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.plcoding.ktorclientandroid.data.remote.PostsService
+import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 
 @ExperimentalMaterialApi
 @Composable
@@ -78,7 +90,7 @@ fun Navigation(){
                 }
             )
         ){entry ->
-            resourcesScreen(arrayList,featureChoice= entry.arguments?.getString("title") )
+            resourcesScreen(navController = navController,featureChoice= entry.arguments?.getString("title") )
 
         }
         composable(
@@ -95,12 +107,73 @@ fun Navigation(){
             accountForm(featureChoice= entry.arguments?.getString("title") )
 
         }
+        composable(
+            route = Screen.resourceFormScreen.route
+
+        ){
+            resourceFrom(navController = navController)
+
+        }
 
     }
 
 }
 
 
+@Composable
+fun resourceFrom(navController: NavController) {
+
+    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
+    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val shape = RoundedCornerShape(topStart = 80.dp)
+
+    Column(modifier = Modifier.background(Color(0xFF4552B8))) {
+
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.35f)
+            .background(Color(0xFF4552B8))
+        )
+
+
+        Box(modifier = Modifier
+            .clip(shape)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    buildAnnotatedString {
+//                    append("welcome to ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                        ) {
+                            append("Add resource!")
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.padding(15.dp))
+                textInput(textFieldName = "Resource name",true)
+                Spacer(modifier = Modifier.padding(5.dp))
+                textInput(textFieldName = "Description", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
+                    modifier = Modifier.size(40.dp).clickable { navController.navigate(Screen.resourcesScreen.withArgs("Resources")) })
+
+
+            }
+
+        }
+
+
+
+    }
+
+}
 
 @Composable
 fun accountForm(featureChoice: String?) {
@@ -183,12 +256,25 @@ fun accountForm(featureChoice: String?) {
 
 @ExperimentalMaterialApi
 @Composable
-fun resourcesScreen(resources: List<Resource>, featureChoice:String?){
+fun resourcesScreen( navController: NavController,featureChoice:String?){
+    val service = PostsService.create()
+    val posts = produceState<List<PostResponse>>(
+        initialValue = emptyList(),
+        producer = {
+            value = service.getPosts()
+        }
+    )
     LazyColumn(){
-        itemsIndexed(resources){index, item ->
+        itemsIndexed(posts.value){index, item ->
             resourceCard(item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
         }
     }
+    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
+        Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
+            modifier = Modifier.size(80.dp).clickable {  navController.navigate(Screen.resourceFormScreen.route)})
+    }
+
+
 }
 
 

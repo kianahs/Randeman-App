@@ -63,66 +63,13 @@ class MainActivity : ComponentActivity() {
 
 
 //            loginScreen()
-  //          featuresScreen()
+            //          featuresScreen()
 //            resourceFrom()
 //            accountForm()
         }
     }
 }
 
-@Composable
-fun resourceFrom() {
-
-    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
-    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
-    val shape = RoundedCornerShape(topStart = 80.dp)
-
-    Column(modifier = Modifier.background(Color(0xFF4552B8))) {
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.35f)
-            .background(Color(0xFF4552B8))
-            )
-
-
-        Box(modifier = Modifier
-            .clip(shape)
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.White)
-            ){
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    buildAnnotatedString {
-//                    append("welcome to ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
-                        ) {
-                            append("Add resource!")
-                        }
-                    }
-                )
-                Spacer(modifier = Modifier.padding(15.dp))
-                textInput(textFieldName = "Resource name",true)
-                Spacer(modifier = Modifier.padding(5.dp))
-                textInput(textFieldName = "Description", false)
-                Spacer(modifier = Modifier.padding(15.dp))
-                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))
-
-
-            }
-
-        }
-
-
-
-    }
-
-}
 @Composable
 
 fun Greeting(name: String) {
