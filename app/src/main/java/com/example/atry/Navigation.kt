@@ -214,11 +214,25 @@ fun taskForm(navController : NavController){
 fun tasksScreen(navController: NavController){
 
     Box(modifier = Modifier.fillMaxWidth()) {
+
+        Text(
+            buildAnnotatedString {
+//                    append("welcome to ")
+
+                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                ) {
+                    append("Today")
+                }
+
+            },
+            modifier = Modifier.padding(10.dp)
+        )
+
         dayCardScroller()
     }
 
 
-    LazyColumn(modifier = Modifier.padding(top=200.dp)){
+    LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
 
         itemsIndexed(
            listOf(Task("refactor",50,500,Resource("CNC","Nothing")),
@@ -229,7 +243,18 @@ fun tasksScreen(navController: NavController){
                Task("run",50,500,Resource("CNC","Nothing"))
            )
         ){index, item ->
-            taskCard(modifier = Modifier,task = item )
+            Box(){
+                Row() {
+                    Icon(Icons.Filled.Info,"",tint = Color(0xFF4552B8),
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(top = 20.dp)
+                            )
+                    taskCard(modifier = Modifier,task = item )
+                }
+
+            }
+
         }
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
@@ -249,11 +274,11 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(20.dp)
             .clickable { },
         elevation = 10.dp,
-        shape = RoundedCornerShape(50.dp),
-        backgroundColor = Color(0xFFFFFACA)
+        shape = RoundedCornerShape(20.dp),
+        backgroundColor = Color(0xFF673AB7)
 
     ) {
         Row(
@@ -267,7 +292,7 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
                 Text(
                     buildAnnotatedString {
 //                    append("welcome to ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color.Black, fontSize = 20.sp)
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color.White, fontSize = 20.sp)
                         ) {
                             append(task.get_task_name())
                         }
@@ -277,7 +302,7 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
                 Text(buildAnnotatedString {
 //                    append("welcome to ")
 
-                    withStyle(style = SpanStyle(color = Color.Gray, fontSize = 10.sp),
+                    withStyle(style = SpanStyle(color = Color.White, fontSize = 10.sp),
 
                         ) {
                         append("Resource:"+task.get_task_resource().resource_name+"\n")
@@ -351,7 +376,7 @@ fun dayCardScroller() {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 40.dp, bottom = 10.dp),
+            .padding(top = 100.dp, bottom = 10.dp),
 
         ) {
         itemsIndexed(items) { index, item ->
