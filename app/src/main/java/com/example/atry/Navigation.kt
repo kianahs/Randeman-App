@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -190,7 +191,8 @@ fun taskForm(navController : NavController){
                 Spacer(modifier = Modifier.padding(15.dp))
                 textInput(textFieldName = "Resource", false)
                 Spacer(modifier = Modifier.padding(15.dp))
-                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)
+                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
+                    .size(40.dp)
                     .clickable { navController.navigate(Screen.tasksScreen.route) }) //bayad eslah she be safeye resourcei ke azash umade
 
 
@@ -211,11 +213,18 @@ fun taskForm(navController : NavController){
 @Composable
 fun tasksScreen(navController: NavController){
 
-    LazyColumn(){
+    Box(modifier = Modifier.fillMaxWidth()) {
+        dayCardScroller()
+    }
+
+
+    LazyColumn(modifier = Modifier.padding(top=200.dp)){
 
         itemsIndexed(
            listOf(Task("refactor",50,500,Resource("CNC","Nothing")),
                Task("check",50,500,Resource("CNC","Nothing")),
+               Task("repair",50,500,Resource("CNC","Nothing")),
+               Task("run",50,500,Resource("CNC","Nothing")),
                Task("repair",50,500,Resource("CNC","Nothing")),
                Task("run",50,500,Resource("CNC","Nothing"))
            )
@@ -225,7 +234,9 @@ fun tasksScreen(navController: NavController){
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
-            modifier = Modifier.size(80.dp).clickable {  navController.navigate(Screen.taskFormScreen.route)})
+            modifier = Modifier
+                .size(80.dp)
+                .clickable { navController.navigate(Screen.taskFormScreen.route) })
     }
 
 
@@ -285,6 +296,72 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 }
 
+@ExperimentalMaterialApi
+@Composable
+fun dayCard(  modifier: Modifier = Modifier, date: Date){
+
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { },
+        elevation = 5.dp,
+        shape = RoundedCornerShape(10.dp),
+        backgroundColor = Color(0xFFF3F3F1)
+
+    ) {
+        Column(Modifier.padding(10.dp)) {
+            Text(
+                buildAnnotatedString {
+
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color.Gray, fontSize = 15.sp)
+                    ) {
+                        append(date.getDayName())
+                    }
+                }
+            )
+
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold,color = Color.Black, fontSize = 15.sp),
+
+
+                        ) {
+                        append(date.getDayNumber())
+                    }
+                },
+                modifier = Modifier.padding(start= 8.dp, end= 8.dp))
+        }
+
+
+
+    }
+
+
+}
+@ExperimentalMaterialApi
+@Composable
+fun dayCardScroller() {
+    val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
+        Date("Mon", "3"),
+        Date("Tue", "4"),
+        Date("Wed", "5"),
+        Date("Thu", "6"),
+        Date("Fri", "7"))
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 40.dp, bottom = 10.dp),
+
+        ) {
+        itemsIndexed(items) { index, item ->
+            dayCard( modifier= Modifier,item)
+        }
+
+    }
+}
+
+
 
 @Composable
 fun resourceFrom(navController: NavController) {
@@ -328,7 +405,9 @@ fun resourceFrom(navController: NavController) {
                 textInput(textFieldName = "Description", false)
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
-                    modifier = Modifier.size(40.dp).clickable { navController.navigate(Screen.resourcesScreen.withArgs("Resources")) })
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable { navController.navigate(Screen.resourcesScreen.withArgs("Resources")) })
 
 
             }
@@ -348,7 +427,10 @@ fun accountForm(featureChoice: String?) {
     val shape = RoundedCornerShape(topStart = 80.dp)
     val shape2 = CircleShape
     Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.10f).background(Color(0xFF4552B8))
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.10f)
+            .background(Color(0xFF4552B8))
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -368,14 +450,22 @@ fun accountForm(featureChoice: String?) {
                 )
             }
         }
-        Box(modifier = Modifier.clip(shape).fillMaxWidth().fillMaxHeight().background(Color.White)
+        Box(modifier = Modifier
+            .clip(shape)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(modifier =Modifier.size(120.dp).fillMaxHeight(10f).clip(shape2).background(Color.Gray)
+                Box(modifier = Modifier
+                    .size(120.dp)
+                    .fillMaxHeight(10f)
+                    .clip(shape2)
+                    .background(Color.Gray)
                 ){
 
                     Spacer(modifier = Modifier.padding(5.dp))
@@ -383,11 +473,16 @@ fun accountForm(featureChoice: String?) {
 
                 }
 
-                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.20f).background(Color.White)
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.20f)
+                    .background(Color.White)
 
                 ){
                     Column(
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.4f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.4f),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -437,7 +532,9 @@ fun resourcesScreen( navController: NavController,featureChoice:String?){
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
-            modifier = Modifier.size(80.dp).clickable {  navController.navigate(Screen.resourceFormScreen.route)})
+            modifier = Modifier
+                .size(80.dp)
+                .clickable { navController.navigate(Screen.resourceFormScreen.route) })
     }
 
 
@@ -452,7 +549,7 @@ fun resourceCard( navController: NavController,resourceName:String,description:S
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { navController.navigate(Screen.tasksScreen.route)},
+            .clickable { navController.navigate(Screen.tasksScreen.route) },
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(0xFFE3DFDC)
