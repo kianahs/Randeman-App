@@ -6,7 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -217,16 +220,48 @@ fun taskForm(navController : NavController){
 @Composable
 fun tasksScreen(navController: NavController){
 
-    LazyColumn(){
+    Box(modifier = Modifier.fillMaxWidth()) {
+
+        Text(
+            buildAnnotatedString {
+//                    append("welcome to ")
+
+                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                ) {
+                    append("Today")
+                }
+
+            },
+            modifier = Modifier.padding(10.dp)
+        )
+
+        dayCardScroller()
+    }
+
+
+    LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
 
         itemsIndexed(
            listOf(Task("refactor",50,500,Resource("CNC","Nothing")),
                Task("check",50,500,Resource("CNC","Nothing")),
                Task("repair",50,500,Resource("CNC","Nothing")),
+               Task("run",50,500,Resource("CNC","Nothing")),
+               Task("repair",50,500,Resource("CNC","Nothing")),
                Task("run",50,500,Resource("CNC","Nothing"))
            )
         ){index, item ->
-            taskCard(modifier = Modifier,task = item )
+            Box(){
+                Row() {
+                    Icon(Icons.Filled.Info,"",tint = Color(0xFF4552B8),
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(top = 20.dp)
+                            )
+                    taskCard(modifier = Modifier,task = item )
+                }
+
+            }
+
         }
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
@@ -246,11 +281,11 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(20.dp)
             .clickable { },
         elevation = 10.dp,
-        shape = RoundedCornerShape(50.dp),
-        backgroundColor = Color(0xFFFFFACA)
+        shape = RoundedCornerShape(20.dp),
+        backgroundColor = Color(0xFF673AB7)
 
     ) {
         Row(
@@ -264,7 +299,7 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
                 Text(
                     buildAnnotatedString {
 //                    append("welcome to ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color.Black, fontSize = 20.sp)
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color.White, fontSize = 20.sp)
                         ) {
                             append(task.get_task_name())
                         }
@@ -274,7 +309,7 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
                 Text(buildAnnotatedString {
 //                    append("welcome to ")
 
-                    withStyle(style = SpanStyle(color = Color.Gray, fontSize = 10.sp),
+                    withStyle(style = SpanStyle(color = Color.White, fontSize = 10.sp),
 
                         ) {
                         append("Resource:"+task.get_task_resource().resource_name+"\n")
@@ -292,6 +327,72 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 
 }
+
+@ExperimentalMaterialApi
+@Composable
+fun dayCard(  modifier: Modifier = Modifier, date: Date){
+
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { },
+        elevation = 5.dp,
+        shape = RoundedCornerShape(10.dp),
+        backgroundColor = Color(0xFFF3F3F1)
+
+    ) {
+        Column(Modifier.padding(10.dp)) {
+            Text(
+                buildAnnotatedString {
+
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color.Gray, fontSize = 15.sp)
+                    ) {
+                        append(date.getDayName())
+                    }
+                }
+            )
+
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold,color = Color.Black, fontSize = 15.sp),
+
+
+                        ) {
+                        append(date.getDayNumber())
+                    }
+                },
+                modifier = Modifier.padding(start= 8.dp, end= 8.dp))
+        }
+
+
+
+    }
+
+
+}
+@ExperimentalMaterialApi
+@Composable
+fun dayCardScroller() {
+    val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
+        Date("Mon", "3"),
+        Date("Tue", "4"),
+        Date("Wed", "5"),
+        Date("Thu", "6"),
+        Date("Fri", "7"))
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 100.dp, bottom = 10.dp),
+
+        ) {
+        itemsIndexed(items) { index, item ->
+            dayCard( modifier= Modifier,item)
+        }
+
+    }
+}
+
 
 
 @Composable
@@ -361,6 +462,7 @@ fun resourceFrom(navController: NavController) {
 
                             navController.navigate(Screen.resourcesScreen.withArgs("Resources"))
                         })
+
 
 
             }
@@ -683,4 +785,91 @@ fun cardElement( title:String, modifier: Modifier = Modifier, icon_shape: @Compo
     }
 
 
+}
+@ExperimentalMaterialApi
+@Composable
+fun calendar() {
+    val service = PostsService.create()
+    val items = listOf("Winter","Spring","Summer","Autumn").map { " $it" }
+    val month1= listOf("January","February","March")
+    val month2= listOf("  April","    May","   June")
+    val month3= listOf("    July","  August","September")
+    val month4= listOf("October","November","December")
+    val col = listOf<Long>(0xFF5DA0D1,0xFF669E68,0xFFE0D29D,0xFFCC845E)
+    LazyColumn() {
+        itemsIndexed(items) { index, item ->
+
+            if(index==0)
+                seasons(item,month1,col[index])
+            if(index==1)
+                seasons(item,month2,col[index])
+            if(index==2)
+                seasons(item,month3,col[index])
+            if(index==3)
+                seasons(item,month4,col[index])
+        }
+
+    }
+}
+@ExperimentalMaterialApi
+@Composable
+fun seasons(name :String, d : List<String>, col : Long) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+            .clickable { },
+        elevation = 10.dp,
+        shape = RoundedCornerShape(15.dp),
+        backgroundColor = Color(col)
+
+
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                            0xFFFFFFFF
+                        ), fontSize = 30.sp)
+                        ){append("             "+name) }
+
+
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Box(modifier = Modifier) {
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    // LazyRow to display your items horizontally
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = rememberLazyListState()
+                    ) {
+                        itemsIndexed(d) { index, item ->
+                            Card(
+                                modifier = Modifier
+                                    .height(40.dp)
+                                    .width(123.dp) // here is the trick
+                                    .padding(3.dp)
+                            ) {
+                                Text("  "+d.get(index),color = Color(col),fontFamily = FontFamily.Serif,fontSize = 18.sp,fontWeight = FontWeight.ExtraBold) // card's content
+
+
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+
+    }
 }
