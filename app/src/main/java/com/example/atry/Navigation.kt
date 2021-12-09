@@ -122,10 +122,10 @@ fun Navigation(){
 
         }
         composable(
-            route = Screen.tasksScreen.route
+            route = Screen.tasksScreen.route + "/{resourceID}",
 
-        ){
-            tasksScreen(navController = navController)
+        ){  entry ->
+            tasksScreen(navController = navController,id = entry.arguments?.getString("resourceID") )
 
         }
         composable(
@@ -218,8 +218,7 @@ fun taskForm(navController : NavController){
 
 @ExperimentalMaterialApi
 @Composable
-fun tasksScreen(navController: NavController){
-
+fun tasksScreen(navController: NavController,id:String?){
     Box(modifier = Modifier.fillMaxWidth()) {
 
         Text(
@@ -585,7 +584,7 @@ fun  resourcesScreen( navController: NavController,featureChoice:String?){
     LazyColumn(){
 
         itemsIndexed(viewModel.state.value.resources){index, item ->
-            resourceCard(navController = navController,item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
+            resourceCard(navController = navController,item.unique_id,item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
         }
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
@@ -601,13 +600,13 @@ fun  resourcesScreen( navController: NavController,featureChoice:String?){
 
 @ExperimentalMaterialApi
 @Composable
-fun resourceCard( navController: NavController,resourceName:String,description:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
+fun resourceCard( navController: NavController,id:Int,resourceName:String,description:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { navController.navigate(Screen.tasksScreen.route) },
+            .clickable { navController.navigate(Screen.tasksScreen.withArgs(id.toString())) },
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(0xFFE3DFDC)
