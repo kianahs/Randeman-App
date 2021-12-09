@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -751,4 +753,91 @@ fun cardElement( title:String, modifier: Modifier = Modifier, icon_shape: @Compo
     }
 
 
+}
+@ExperimentalMaterialApi
+@Composable
+fun calendar() {
+    val service = PostsService.create()
+    val items = listOf("Winter","Spring","Summer","Autumn").map { " $it" }
+    val month1= listOf("January","February","March")
+    val month2= listOf("  April","    May","   June")
+    val month3= listOf("    July","  August","September")
+    val month4= listOf("October","November","December")
+    val col = listOf<Long>(0xFF5DA0D1,0xFF669E68,0xFFE0D29D,0xFFCC845E)
+    LazyColumn() {
+        itemsIndexed(items) { index, item ->
+
+            if(index==0)
+                seasons(item,month1,col[index])
+            if(index==1)
+                seasons(item,month2,col[index])
+            if(index==2)
+                seasons(item,month3,col[index])
+            if(index==3)
+                seasons(item,month4,col[index])
+        }
+
+    }
+}
+@ExperimentalMaterialApi
+@Composable
+fun seasons(name :String, d : List<String>, col : Long) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+            .clickable { },
+        elevation = 10.dp,
+        shape = RoundedCornerShape(15.dp),
+        backgroundColor = Color(col)
+
+
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                            0xFFFFFFFF
+                        ), fontSize = 30.sp)
+                        ){append("             "+name) }
+
+
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Box(modifier = Modifier) {
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    // LazyRow to display your items horizontally
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = rememberLazyListState()
+                    ) {
+                        itemsIndexed(d) { index, item ->
+                            Card(
+                                modifier = Modifier
+                                    .height(40.dp)
+                                    .width(123.dp) // here is the trick
+                                    .padding(3.dp)
+                            ) {
+                                Text("  "+d.get(index),color = Color(col),fontFamily = FontFamily.Serif,fontSize = 18.sp,fontWeight = FontWeight.ExtraBold) // card's content
+
+
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+
+    }
 }
