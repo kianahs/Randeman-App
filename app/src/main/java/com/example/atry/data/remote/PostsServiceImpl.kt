@@ -2,15 +2,15 @@ package com.plcoding.ktorclientandroid.data.remote
 
 import com.plcoding.ktorclientandroid.data.remote.dto.PostRequest
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
+import dagger.Module
+import dagger.Provides
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-
 class PostsServiceImpl(
     private val client: HttpClient
 ) : PostsService {
-
     override suspend fun getPosts(): List<PostResponse> {
         return try {
             client.get { url(HttpRoutes.POSTS) }
@@ -31,7 +31,6 @@ class PostsServiceImpl(
             emptyList()
         }
     }
-
     override suspend fun createPost(postRequest: PostRequest): PostResponse? {
         return try {
             client.post<PostResponse> {

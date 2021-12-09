@@ -2,6 +2,7 @@ package com.plcoding.ktorclientandroid.data.remote
 
 import com.plcoding.ktorclientandroid.data.remote.dto.PostRequest
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
+import dagger.Provides
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.features.json.*

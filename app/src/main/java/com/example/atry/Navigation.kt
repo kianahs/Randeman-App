@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.activity.viewModels
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 
@@ -39,6 +40,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -47,6 +50,8 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
+import dagger.hilt.android.AndroidEntryPoint
+
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
@@ -190,7 +195,8 @@ fun taskForm(navController : NavController){
                 Spacer(modifier = Modifier.padding(15.dp))
                 textInput(textFieldName = "Resource", false)
                 Spacer(modifier = Modifier.padding(15.dp))
-                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)
+                Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
+                    .size(40.dp)
                     .clickable { navController.navigate(Screen.tasksScreen.route) }) //bayad eslah she be safeye resourcei ke azash umade
 
 
@@ -225,7 +231,9 @@ fun tasksScreen(navController: NavController){
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
-            modifier = Modifier.size(80.dp).clickable {  navController.navigate(Screen.taskFormScreen.route)})
+            modifier = Modifier
+                .size(80.dp)
+                .clickable { navController.navigate(Screen.taskFormScreen.route) })
     }
 
 
@@ -288,9 +296,9 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 @Composable
 fun resourceFrom(navController: NavController) {
-
-    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
-    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val addViewModel: AddResourcesViewModel = hiltViewModel()
+    var resourceNameState  by rememberSaveable { mutableStateOf("") }
+    var resourceDescriptionState by rememberSaveable { mutableStateOf("") }
     val shape = RoundedCornerShape(topStart = 80.dp)
 
     Column(modifier = Modifier.background(Color(0xFF4552B8))) {
@@ -323,12 +331,36 @@ fun resourceFrom(navController: NavController) {
                     }
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
-                textInput(textFieldName = "Resource name",true)
+                TextField(
+                    value = resourceNameState,
+                    onValueChange = { resourceNameState = it },
+                    label = { Text("Enter Resource name") }
+                )
                 Spacer(modifier = Modifier.padding(5.dp))
-                textInput(textFieldName = "Description", false)
+                TextField(
+                    value = resourceDescriptionState,
+                    onValueChange = { resourceDescriptionState = it },
+                    label = { Text("Enter Description") },
+                )
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
-                    modifier = Modifier.size(40.dp).clickable { navController.navigate(Screen.resourcesScreen.withArgs("Resources")) })
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable {
+
+                            val resource: com.example.atry.data.remote.dto.Resource =
+                                com.example.atry.data.remote.dto.Resource(
+                                    -1,
+                                    "null",
+                                    resourceDescriptionState,
+                                    resourceNameState,
+                                    -1
+                                )
+                            addViewModel.addResource(resource)
+
+
+                            navController.navigate(Screen.resourcesScreen.withArgs("Resources"))
+                        })
 
 
             }
@@ -348,7 +380,10 @@ fun accountForm(featureChoice: String?) {
     val shape = RoundedCornerShape(topStart = 80.dp)
     val shape2 = CircleShape
     Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.10f).background(Color(0xFF4552B8))
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.10f)
+            .background(Color(0xFF4552B8))
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -368,14 +403,22 @@ fun accountForm(featureChoice: String?) {
                 )
             }
         }
-        Box(modifier = Modifier.clip(shape).fillMaxWidth().fillMaxHeight().background(Color.White)
+        Box(modifier = Modifier
+            .clip(shape)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(modifier =Modifier.size(120.dp).fillMaxHeight(10f).clip(shape2).background(Color.Gray)
+                Box(modifier = Modifier
+                    .size(120.dp)
+                    .fillMaxHeight(10f)
+                    .clip(shape2)
+                    .background(Color.Gray)
                 ){
 
                     Spacer(modifier = Modifier.padding(5.dp))
@@ -383,11 +426,16 @@ fun accountForm(featureChoice: String?) {
 
                 }
 
-                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.20f).background(Color.White)
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.20f)
+                    .background(Color.White)
 
                 ){
                     Column(
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.4f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.4f),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -422,7 +470,9 @@ fun accountForm(featureChoice: String?) {
 
 @ExperimentalMaterialApi
 @Composable
-fun resourcesScreen( navController: NavController,featureChoice:String?){
+fun  resourcesScreen( navController: NavController,featureChoice:String?){
+    val viewModel:ResourcesViewModel = hiltViewModel()
+
     val service = PostsService.create()
     val posts = produceState<List<PostResponse>>(
         initialValue = emptyList(),
@@ -431,13 +481,16 @@ fun resourcesScreen( navController: NavController,featureChoice:String?){
         }
     )
     LazyColumn(){
-        itemsIndexed(posts.value){index, item ->
+
+        itemsIndexed(viewModel.state.value.resources){index, item ->
             resourceCard(navController = navController,item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
         }
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
-            modifier = Modifier.size(80.dp).clickable {  navController.navigate(Screen.resourceFormScreen.route)})
+            modifier = Modifier
+                .size(80.dp)
+                .clickable { navController.navigate(Screen.resourceFormScreen.route) })
     }
 
 
@@ -452,7 +505,7 @@ fun resourceCard( navController: NavController,resourceName:String,description:S
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { navController.navigate(Screen.tasksScreen.route)},
+            .clickable { navController.navigate(Screen.tasksScreen.route) },
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(0xFFE3DFDC)
@@ -513,16 +566,17 @@ fun loginScreen(navController: NavController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            buildAnnotatedString {
-//                    append("welcome to ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 50.sp)
-                ) {
-                    append("Welcome !")
-                }
-            }
-        )
-        Spacer(modifier = Modifier.padding(15.dp))
+        Image(painterResource(R.drawable.logo3),"logo")
+//        Text(
+//            buildAnnotatedString {
+////                    append("welcome to ")
+//                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 50.sp)
+//                ) {
+//                    append("Welcome !")
+//                }
+//            }
+//        )
+//        Spacer(modifier = Modifier.padding(15.dp))
         TextField(
             value = usernameState,
             onValueChange = { usernameState = it },
