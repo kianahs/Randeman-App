@@ -71,7 +71,7 @@ fun Greeting(name: String) {
 fun DefaultPreview() {
 //   dayCardScroller()
 
-    taskCard(modifier = Modifier,task = Task("run",50,500,Resource("CNC","Nothing")))
+//    taskCard(modifier = Modifier,task = Task("run",50,500,Resource("CNC","Nothing")))
 //    Column() {
 //        taskCard( Modifier,Task("refactor",50,500,Resource("CNC","Nothing")))
 //        taskCard( Modifier,Task("refactor",50,500,Resource("CNC","Nothing")))
