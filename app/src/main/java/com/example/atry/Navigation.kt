@@ -334,9 +334,10 @@ fun taskForm(navController : NavController,resourceID:String?){
                 }
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
-                    .size(40.dp)
+                    .size(130.dp)
+                    .padding(bottom=50.dp)
                     .clickable { navController.navigate(Screen.tasksScreen.withArgs("1")) }) //bayad eslah she be resource id
-
+//                Spacer(modifier = Modifier.padding(15.dp))
 
             }
 
@@ -387,7 +388,7 @@ fun tasksScreen(navController: NavController,id:String?){
     CircularProgressBar(isDisplayed = getTaskViewModel.state.value.isLoading)
 
 
-    LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
+    LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp, bottom = 50.dp)){
 
         itemsIndexed(
             getTaskViewModel.state.value.tasks
@@ -413,6 +414,7 @@ fun tasksScreen(navController: NavController,id:String?){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
             modifier = Modifier
                 .size(80.dp)
+
                 .clickable { navController.navigate(Screen.taskFormScreen.withArgs(id.toString())) })
     }
 
@@ -728,7 +730,7 @@ fun  resourcesScreen( navController: NavController,featureChoice:String?){
         }
     )
     CircularProgressBar(isDisplayed = viewModel.state.value.isLoading)
-    LazyColumn(){
+    LazyColumn(modifier = Modifier.padding(bottom = 50.dp)){
 
         itemsIndexed(viewModel.state.value.resources){index, item ->
             resourceCard(navController = navController,item.unique_id,item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
@@ -737,7 +739,8 @@ fun  resourcesScreen( navController: NavController,featureChoice:String?){
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
             modifier = Modifier
-                .size(80.dp)
+                .size(130.dp)
+                .padding(bottom = 50.dp)
                 .clickable { navController.navigate(Screen.resourceFormScreen.route) })
     }
 
@@ -1015,7 +1018,7 @@ fun announcementScroller() {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp, bottom = 100.dp),
+            .padding(top = 10.dp, bottom = 60.dp),
 
         ) {
         itemsIndexed(items) { index, item ->
@@ -1285,7 +1288,7 @@ fun seasonsScreen(navController: NavController,id:String?) {
     val month3= listOf("    July","  August","September")
     val month4= listOf("October","November","December")
     val col = listOf<Long>(0xFF5DA0D1,0xFF669E68,0xFFE0D29D,0xFFCC845E)
-    LazyColumn() {
+    LazyColumn(modifier = Modifier.padding(bottom = 50.dp)) {
         itemsIndexed(items) { index, item ->
 
             if(index==0)
@@ -1320,6 +1323,7 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationItem.FAQ
     )
     BottomNavigation(
+
         backgroundColor = colorResource(id = R.color.purple_500),
         contentColor = Color.White
     ) {
