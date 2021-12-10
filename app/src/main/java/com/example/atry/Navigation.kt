@@ -221,7 +221,7 @@ fun taskForm(navController : NavController){
 @Composable
 fun tasksScreen(navController: NavController,id:String?){
     val getTaskViewModel:GetTaskViewModel = hiltViewModel()
-    if (id != null) {
+    if (id != null && !getTaskViewModel.dataLoaded.value) {
         getTaskViewModel.getTask(id.toInt())
     }
 
@@ -241,7 +241,9 @@ fun tasksScreen(navController: NavController,id:String?){
         )
 
         dayCardScroller()
+
     }
+    CircularProgressBar(isDisplayed = getTaskViewModel.state.value.isLoading)
 
 
     LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
@@ -263,6 +265,7 @@ fun tasksScreen(navController: NavController,id:String?){
 
         }
     }
+
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
             modifier = Modifier
@@ -581,6 +584,7 @@ fun  resourcesScreen( navController: NavController,featureChoice:String?){
             value = service.getPosts()
         }
     )
+    CircularProgressBar(isDisplayed = viewModel.state.value.isLoading)
     LazyColumn(){
 
         itemsIndexed(viewModel.state.value.resources){index, item ->
