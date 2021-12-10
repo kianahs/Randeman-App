@@ -47,6 +47,14 @@ class GetTaskViewModel @Inject constructor(
             }
         }
 
+
+    }
+
+
+    fun deleteTasks(){
+        viewModelScope.launch {
+            _state.value = state.value.copy(tasks = listOf())
+        }
     }
 
 }

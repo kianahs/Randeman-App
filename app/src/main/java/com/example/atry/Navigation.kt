@@ -1,5 +1,9 @@
 package com.example.atry
 
+import android.app.DatePickerDialog
+import android.content.Context
+import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,7 +54,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.collections.ArrayList
 
+
+var selectedDay = mutableStateOf(1)
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
@@ -95,6 +105,7 @@ fun Navigation(){
             resourcesScreen(navController = navController,featureChoice= entry.arguments?.getString("title") )
 
         }
+
         composable(
             route = Screen.accountFormScreen.route + "/{title}",
             arguments = listOf(
@@ -117,6 +128,13 @@ fun Navigation(){
 
         }
         composable(
+            route = Screen.seasonsScreen.route + "/{resourceID}",
+
+            ){  entry ->
+            seasonsScreen(navController = navController,id = entry.arguments?.getString("resourceID") )
+
+        }
+        composable(
             route = Screen.tasksScreen.route + "/{resourceID}",
 
         ){  entry ->
@@ -135,12 +153,66 @@ fun Navigation(){
 
 }
 
+
+
+@Composable
+fun showDatePicker(context: Context,deadLineState:String,onDateChanged: (String) -> Unit){
+    val year: Int
+    val month: Int
+    val day: Int
+
+    val calender = Calendar.getInstance()
+    year = calender.get(Calendar.YEAR)
+    month = calender.get(Calendar.MONTH)
+    day = calender.get(Calendar.DAY_OF_MONTH)
+    calender.time = Date()
+
+    val date = remember {mutableStateOf("")}
+    var pickedDate by remember { mutableStateOf("")}
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year:Int, month:Int, dayOfMonth: Int ->
+            date.value = "$dayOfMonth/$month/$year"
+        }, year, month, day
+    )
+
+    Row(
+        modifier = Modifier.padding(start = 50.dp, end = 50.dp),
+//        verticalArrangement = Arrangement.Center,
+//        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+//        Text(text = "Selected Date: ${date.value}")
+
+        pickedDate = date.value
+        OutlinedTextField(
+            modifier = Modifier.width(240.dp),
+            value = pickedDate,
+            onValueChange = onDateChanged,
+            label = { Text("Deadline") },
+            enabled = false,
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.padding(5.dp))
+        Icon(Icons.Filled.DateRange,"",tint = Color(0xFF4552B8),modifier = Modifier
+            .size(30.dp)
+            .clickable { datePickerDialog.show() }
+            .padding(top = 8.dp))
+
+
+    }
+
+}
+
 @Composable
 fun taskForm(navController : NavController,resourceID:String?){
-        var resourceIDState by rememberSaveable { mutableStateOf(resourceID) }
+    var resourceIDState by rememberSaveable { mutableStateOf(resourceID)}
+    var taskNameState by rememberSaveable{mutableStateOf("")}
+    var durationState by rememberSaveable{mutableStateOf("")}
+    var deadlineState by rememberSaveable {mutableStateOf("")}
+    var priorityState by rememberSaveable{mutableStateOf("0")}
 
-//    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
-//    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    deadlineState = "3434"
+    val context = LocalContext.current
     val shape = RoundedCornerShape(topStart = 80.dp)
     Column(modifier = Modifier.background(Color(0xFF4552B8))) {
 
@@ -153,8 +225,12 @@ fun taskForm(navController : NavController,resourceID:String?){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
-//                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
+                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clickable { navController.navigate(Screen.accountFormScreen.route) }
+                )
+//
 
             }
         }
@@ -177,25 +253,59 @@ fun taskForm(navController : NavController,resourceID:String?){
 //                    append("welcome to ")
                             withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
                             ) {
-                                append("Add task")
+                                append("Add task${deadlineState}")
                             }
                         }
                     )
-                    Icon(Icons.Filled.CheckCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(50.dp))
+                    Icon(Icons.Filled.CheckCircle,"",tint = Color(0xFF4552B8),
+                        modifier = Modifier.size(50.dp)
+
+                    )
 
 
                 }
                 Spacer(modifier = Modifier.padding(15.dp))
-                textInput(textFieldName = "Task name",true)
+                OutlinedTextField(
+                    value = taskNameState,
+                    onValueChange = {
+                        resourceIDState = it
+                    },
+                    label = { Text("Task name") },
+                    singleLine = true
+                )
                 Spacer(modifier = Modifier.padding(15.dp))
-                textInput(textFieldName = "Duration", false)
+                OutlinedTextField(
+                    value = durationState,
+                    onValueChange = {
+                        durationState = it
+                    },
+                    label = { Text("Duration") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    singleLine = true
+                )
                 Spacer(modifier = Modifier.padding(15.dp))
-                textInput(textFieldName = "priority", false)
+                showDatePicker(context = context,deadlineState,onDateChanged = {deadlineState = it})
+                Spacer(modifier = Modifier.padding(15.dp))
+                OutlinedTextField(
+                    value = priorityState,
+                    onValueChange = {
+                        priorityState = if(it === "") {
+                            "0"
+                        } else{
+                            it.toInt().toString()
+                        }
+                         },
+                    label = { Text("priority") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    singleLine = true
+                )
                 Spacer(modifier = Modifier.padding(15.dp))
                 if (resourceID != null) {
                     OutlinedTextField(
                         value = resourceIDState.toString(),
-                        onValueChange = { resourceIDState = it },
+                        onValueChange = {
+                            resourceIDState = it
+                                        },
                         label = { Text("Resource ID") },
                         enabled = false,
                         singleLine = true
@@ -204,7 +314,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
                     .size(40.dp)
-                    .clickable { navController.navigate(Screen.tasksScreen.route) }) //bayad eslah she be safeye resourcei ke azash umade
+                    .clickable { navController.navigate(Screen.tasksScreen.withArgs("1")) }) //bayad eslah she be resource id
 
 
             }
@@ -228,7 +338,13 @@ fun tasksScreen(navController: NavController,id:String?){
         getTaskViewModel.getTask(id.toInt())
     }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
+
+    var count by remember { mutableStateOf(0) }
+    val context = LocalContext.current
+
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxWidth()) {
 
         Text(
             buildAnnotatedString {
@@ -243,7 +359,8 @@ fun tasksScreen(navController: NavController,id:String?){
             modifier = Modifier.padding(10.dp)
         )
 
-        dayCardScroller()
+
+        dayCardScroller(viewmodel = getTaskViewModel)
 
     }
     CircularProgressBar(isDisplayed = getTaskViewModel.state.value.isLoading)
@@ -261,7 +378,9 @@ fun tasksScreen(navController: NavController,id:String?){
                             .size(40.dp)
                             .padding(top = 20.dp)
                             )
+
                     taskCard(modifier = Modifier,task = item)
+
                 }
 
             }
@@ -335,12 +454,12 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 @ExperimentalMaterialApi
 @Composable
-fun dayCard(  modifier: Modifier = Modifier, date: Date){
+fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel){
 
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable { },
+            .clickable { viewmodel.deleteTasks() },
         elevation = 5.dp,
         shape = RoundedCornerShape(10.dp),
         backgroundColor = Color(0xFFF3F3F1)
@@ -377,7 +496,7 @@ fun dayCard(  modifier: Modifier = Modifier, date: Date){
 }
 @ExperimentalMaterialApi
 @Composable
-fun dayCardScroller() {
+fun dayCardScroller(viewmodel: GetTaskViewModel) {
     val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
         Date("Mon", "3"),
         Date("Tue", "4"),
@@ -392,7 +511,7 @@ fun dayCardScroller() {
 
         ) {
         itemsIndexed(items) { index, item ->
-            dayCard( modifier= Modifier,item)
+            dayCard( modifier= Modifier,item, viewmodel)
         }
 
     }
@@ -613,7 +732,7 @@ fun resourceCard( navController: NavController,id:Int,resourceName:String,descri
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { navController.navigate(Screen.tasksScreen.withArgs(id.toString())) },
+            .clickable { navController.navigate(Screen.seasonsScreen.withArgs(id.toString())) },
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(0xFFE3DFDC)
@@ -794,7 +913,7 @@ fun cardElement( title:String, modifier: Modifier = Modifier, icon_shape: @Compo
 }
 @ExperimentalMaterialApi
 @Composable
-fun calendar() {
+fun seasonsScreen(navController: NavController,id:String?) {
     val service = PostsService.create()
     val items = listOf("Winter","Spring","Summer","Autumn").map { " $it" }
     val month1= listOf("January","February","March")
@@ -806,25 +925,25 @@ fun calendar() {
         itemsIndexed(items) { index, item ->
 
             if(index==0)
-                seasons(item,month1,col[index])
+                seasons(navController,item,month1,col[index],id)
             if(index==1)
-                seasons(item,month2,col[index])
+                seasons(navController,item,month2,col[index],id)
             if(index==2)
-                seasons(item,month3,col[index])
+                seasons(navController,item,month3,col[index],id)
             if(index==3)
-                seasons(item,month4,col[index])
+                seasons(navController,item,month4,col[index],id)
         }
 
     }
 }
 @ExperimentalMaterialApi
 @Composable
-fun seasons(name :String, d : List<String>, col : Long) {
+fun seasons(navController: NavController,name :String, d : List<String>, col : Long,id:String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { },
+            ,
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(col)
@@ -864,6 +983,13 @@ fun seasons(name :String, d : List<String>, col : Long) {
                                     .height(40.dp)
                                     .width(123.dp) // here is the trick
                                     .padding(3.dp)
+                                    .clickable {
+                                        navController.navigate(
+                                            Screen.tasksScreen.withArgs(
+                                                id.toString()
+                                            )
+                                        )
+                                    }
                             ) {
                                 Text("  "+d.get(index),color = Color(col),fontFamily = FontFamily.Serif,fontSize = 18.sp,fontWeight = FontWeight.ExtraBold) // card's content
 
