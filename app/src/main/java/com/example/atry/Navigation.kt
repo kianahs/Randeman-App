@@ -214,8 +214,11 @@ fun taskForm(navController : NavController){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
-//                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,modifier = Modifier.size(50.dp))
+                Icon(Icons.Filled.AccountCircle,"",tint = Color.White,
+                    modifier = Modifier.size(50.dp)
+                        .clickable { navController.navigate(Screen.accountFormScreen.route) }
+                )
+//
 
             }
         }
@@ -242,7 +245,10 @@ fun taskForm(navController : NavController){
                             }
                         }
                     )
-                    Icon(Icons.Filled.CheckCircle,"",tint = Color(0xFF4552B8),modifier = Modifier.size(50.dp))
+                    Icon(Icons.Filled.CheckCircle,"",tint = Color(0xFF4552B8),
+                        modifier = Modifier.size(50.dp)
+
+                    )
 
 
                 }
@@ -259,7 +265,7 @@ fun taskForm(navController : NavController){
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
                     .size(40.dp)
-                    .clickable { navController.navigate(Screen.tasksScreen.route) }) //bayad eslah she be safeye resourcei ke azash umade
+                    .clickable { navController.navigate(Screen.tasksScreen.withArgs("1")) }) //bayad eslah she be resource id
 
 
             }
