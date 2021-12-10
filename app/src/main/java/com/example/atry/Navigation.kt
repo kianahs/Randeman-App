@@ -3,7 +3,6 @@ package com.example.atry
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,7 +53,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -205,13 +203,13 @@ fun showDatePicker(context: Context,deadLineState:String,onDateChanged: (String)
 
 @Composable
 fun taskForm(navController : NavController,resourceID:String?){
+    val addTaskviewModel:AddTaskViewModel = hiltViewModel()
     var resourceIDState by rememberSaveable { mutableStateOf(resourceID)}
     var taskNameState by rememberSaveable{mutableStateOf("")}
     var durationState by rememberSaveable{mutableStateOf("")}
     var deadlineState by rememberSaveable {mutableStateOf("")}
     var priorityState by rememberSaveable{mutableStateOf("0")}
 
-    deadlineState = "3434"
     val context = LocalContext.current
     val shape = RoundedCornerShape(topStart = 80.dp)
     Column(modifier = Modifier.background(Color(0xFF4552B8))) {
@@ -253,7 +251,7 @@ fun taskForm(navController : NavController,resourceID:String?){
 //                    append("welcome to ")
                             withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
                             ) {
-                                append("Add task${deadlineState}")
+                                append("Add task")
                             }
                         }
                     )
@@ -268,7 +266,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                 OutlinedTextField(
                     value = taskNameState,
                     onValueChange = {
-                        resourceIDState = it
+                        taskNameState = it
                     },
                     label = { Text("Task name") },
                     singleLine = true
@@ -284,7 +282,50 @@ fun taskForm(navController : NavController,resourceID:String?){
                     singleLine = true
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
-                showDatePicker(context = context,deadlineState,onDateChanged = {deadlineState = it})
+
+                // Date Picker
+                val year: Int
+                val month: Int
+                val day: Int
+
+                val calender = Calendar.getInstance()
+                year = calender.get(Calendar.YEAR)
+                month = calender.get(Calendar.MONTH)
+                day = calender.get(Calendar.DAY_OF_MONTH)
+                calender.time = Date()
+
+                val date = remember {mutableStateOf("")}
+                val datePickerDialog = DatePickerDialog(
+                    context,
+                    { _: DatePicker, year:Int, month:Int, dayOfMonth: Int ->
+                        date.value = "$dayOfMonth/$month/$year"
+                    }, year, month, day
+                )
+
+                Row(
+                    modifier = Modifier.padding(start = 50.dp, end = 50.dp),
+//        verticalArrangement = Arrangement.Center,
+//        horizontalAlignment = Alignment.CenterHorizontally
+                ){
+//        Text(text = "Selected Date: ${date.value}")
+
+                    deadlineState = date.value
+                    OutlinedTextField(
+                        modifier = Modifier.width(240.dp),
+                        value = deadlineState,
+                        onValueChange = { deadlineState = it },
+                        label = { Text("Deadline") },
+                        enabled = false,
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Icon(Icons.Filled.DateRange,"",tint = Color(0xFF4552B8),modifier = Modifier
+                        .size(30.dp)
+                        .clickable { datePickerDialog.show() }
+                        .padding(top = 8.dp))
+
+
+                }
                 Spacer(modifier = Modifier.padding(15.dp))
                 OutlinedTextField(
                     value = priorityState,
@@ -314,7 +355,22 @@ fun taskForm(navController : NavController,resourceID:String?){
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
                     .size(40.dp)
-                    .clickable { navController.navigate(Screen.tasksScreen.withArgs("1")) }) //bayad eslah she be resource id
+                    .clickable {
+
+                        val task: com.example.atry.data.remote.dto.Task = com.example.atry.data.remote.dto.Task(
+                            " ",
+                            durationState.toInt(),
+                            taskNameState,
+                            priorityState.toInt(),
+                            deadlineState,
+                            -1,
+                            " "
+                        )
+                        if (resourceID != null) {
+                            addTaskviewModel.addResource(resourceID.toInt(),task)
+                        }
+                        navController.navigate(Screen.tasksScreen.withArgs(resourceID))
+                    })
 
 
             }
