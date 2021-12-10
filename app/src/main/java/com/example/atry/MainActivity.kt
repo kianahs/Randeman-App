@@ -44,6 +44,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 
 import java.sql.*
@@ -65,9 +66,11 @@ class MainActivity : ComponentActivity() {
 //            showDatePicker(this)
 //            dayCardScroller()
 
+
             Navigation()
+
 //            resourcesScreen(arrayList)
-         
+
 
 //            loginScreen()
             //          featuresScreen()
