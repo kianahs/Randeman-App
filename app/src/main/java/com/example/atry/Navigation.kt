@@ -63,6 +63,11 @@ import kotlin.collections.ArrayList
 
 
 var selectedDay = mutableStateOf(1)
+@Composable
+public fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
+}
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
@@ -76,8 +81,9 @@ fun Navigation(){
     val navController = rememberNavController()
 
     Scaffold(
-        topBar = { TopBar() },
-        bottomBar = { BottomNavigationBar(navController) }
+        topBar ={if (currentRoute(navController = navController)!="login_screen") TopBar() },
+        bottomBar = { if (currentRoute(navController = navController)!="login_screen") BottomNavigationBar(navController) }
+
     ) {
         NavHost(navController = navController, startDestination = Screen.loginScreen.route) {
             composable(route = Screen.loginScreen.route) {
