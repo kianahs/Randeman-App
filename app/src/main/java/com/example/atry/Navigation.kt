@@ -1,5 +1,8 @@
 package com.example.atry
 
+import android.app.DatePickerDialog
+import android.content.Context
+import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,6 +60,9 @@ import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.collections.ArrayList
+
 var selectedDay = mutableStateOf(1)
 @ExperimentalMaterialApi
 @Composable
@@ -144,10 +150,58 @@ fun Navigation(){
 }
 
 @Composable
+fun showDatePicker(context: Context){
+    val year: Int
+    val month: Int
+    val day: Int
+
+    val calender = Calendar.getInstance()
+    year = calender.get(Calendar.YEAR)
+    month = calender.get(Calendar.MONTH)
+    day = calender.get(Calendar.DAY_OF_MONTH)
+    calender.time = Date()
+
+    val date = remember {mutableStateOf("")}
+    var pickedDate by remember { mutableStateOf("")}
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year:Int, month:Int, dayOfMonth: Int ->
+            date.value = "$dayOfMonth/$month/$year"
+        }, year, month, day
+    )
+
+    Row(
+        modifier = Modifier.padding(start = 50.dp, end = 50.dp),
+//        verticalArrangement = Arrangement.Center,
+//        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+//        Text(text = "Selected Date: ${date.value}")
+        pickedDate = date.value
+        OutlinedTextField(
+            modifier = Modifier.width(240.dp),
+            value = pickedDate.toString(),
+            onValueChange = { pickedDate = it },
+            label = { Text("Deadline") },
+            enabled = false,
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.padding(5.dp))
+        Icon(Icons.Filled.DateRange,"",tint = Color(0xFF4552B8),modifier = Modifier
+            .size(30.dp)
+            .clickable { datePickerDialog.show() }
+            .padding(top = 8.dp))
+
+
+    }
+
+}
+
+@Composable
 fun taskForm(navController : NavController){
 
 //    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
 //    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val context = LocalContext.current
     val shape = RoundedCornerShape(topStart = 80.dp)
     Column(modifier = Modifier.background(Color(0xFF4552B8))) {
 
@@ -196,6 +250,8 @@ fun taskForm(navController : NavController){
                 textInput(textFieldName = "Task name",true)
                 Spacer(modifier = Modifier.padding(15.dp))
                 textInput(textFieldName = "Duration", false)
+                Spacer(modifier = Modifier.padding(15.dp))
+                showDatePicker(context = context)
                 Spacer(modifier = Modifier.padding(15.dp))
                 textInput(textFieldName = "priority", false)
                 Spacer(modifier = Modifier.padding(15.dp))
@@ -264,7 +320,7 @@ fun tasksScreen(navController: NavController,id:String?){
     }
     CircularProgressBar(isDisplayed = getTaskViewModel.state.value.isLoading)
 
-    val sala = listOf(1,2,3)
+
     LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
 
         itemsIndexed(
