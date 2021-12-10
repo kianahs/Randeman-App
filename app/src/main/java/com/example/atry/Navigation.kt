@@ -1339,7 +1339,7 @@ fun BottomNavigationBar(navController: NavController) {
                 selected = currentRoute == item.route,
                 onClick = {
                     if(item.route ==NavigationItem.Home.route ){
-                        navController.navigate(Screen.resourcesScreen.withArgs("Resources"))
+                        navController.navigate(Screen.featuresScreen.withArgs("ss"))
                     }
                     if(item.route ==NavigationItem.Resources.route ){
                         navController.navigate(Screen.resourcesScreen.withArgs("Resources"))
