@@ -1,5 +1,6 @@
 package com.example.atry
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -54,7 +56,7 @@ import androidx.navigation.compose.rememberNavController
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import dagger.hilt.android.AndroidEntryPoint
-
+var selectedDay = mutableStateOf(1)
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
@@ -220,8 +222,53 @@ fun taskForm(navController : NavController){
 @Composable
 fun tasksScreen(navController: NavController){
 
-    Box(modifier = Modifier.fillMaxWidth()) {
 
+    var count by remember { mutableStateOf(0) }
+    val context = LocalContext.current
+    var tasksOne by remember {
+        mutableStateOf(
+            listOf<Task>(
+                Task("refactor",50,500,Resource("CNC","Nothing")),
+                Task("check",50,500,Resource("CNC","Nothing")),
+                Task("repair",50,500,Resource("CNC","Nothing")),
+                Task("run",50,500,Resource("CNC","Nothing")),
+                Task("repair",50,500,Resource("CNC","Nothing"))
+
+            )
+        )
+    }
+    val allTasks = listOf(Task("refactor",50,500,Resource("CNC","Nothing")),
+        Task("check",50,500,Resource("CNC","Nothing")),
+        Task("repair",50,500,Resource("CNC","Nothing")),
+        Task("run",50,500,Resource("CNC","Nothing")),
+        Task("repair",50,500,Resource("CNC","Nothing")),
+        Task("A",50,500,Resource("CNC","Nothing")),
+        Task("B",50,500,Resource("CNC","Nothing")),
+        Task("C",50,500,Resource("CNC","Nothing")),
+        Task("D",50,500,Resource("CNC","Nothing"))
+    )
+
+
+
+    Box(modifier = Modifier.fillMaxWidth()
+        .fillMaxWidth()) {
+        Button(onClick = { count += 1;
+            Toast.makeText(
+                context,
+                "sate : count =  ${count} day= ${selectedDay.value}",
+                Toast.LENGTH_SHORT
+            ).show();
+            print(count);
+            tasksOne = listOf(
+                Task("A",50,500,Resource("CNC","Nothing")),
+                Task("B",50,500,Resource("CNC","Nothing")),
+                Task("C",50,500,Resource("CNC","Nothing")),
+                Task("D",50,500,Resource("CNC","Nothing"))
+
+            )
+        }, modifier = Modifier.padding(start= 200.dp)) {
+            Text(text = "state change")
+        }
         Text(
             buildAnnotatedString {
 //                    append("welcome to ")
@@ -238,17 +285,12 @@ fun tasksScreen(navController: NavController){
         dayCardScroller()
     }
 
-
+    val sala = listOf(1,2,3)
     LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
 
         itemsIndexed(
-           listOf(Task("refactor",50,500,Resource("CNC","Nothing")),
-               Task("check",50,500,Resource("CNC","Nothing")),
-               Task("repair",50,500,Resource("CNC","Nothing")),
-               Task("run",50,500,Resource("CNC","Nothing")),
-               Task("repair",50,500,Resource("CNC","Nothing")),
-               Task("run",50,500,Resource("CNC","Nothing"))
-           )
+           tasksOne
+
         ){index, item ->
             Box(){
                 Row() {
@@ -257,7 +299,7 @@ fun tasksScreen(navController: NavController){
                             .size(40.dp)
                             .padding(top = 20.dp)
                             )
-                    taskCard(modifier = Modifier,task = item )
+                    taskCard(modifier = Modifier,task = tasksOne[index] )
                 }
 
             }
@@ -335,7 +377,7 @@ fun dayCard(  modifier: Modifier = Modifier, date: Date){
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable { },
+            .clickable { selectedDay.value = date.getDayNumber().toInt() },
         elevation = 5.dp,
         shape = RoundedCornerShape(10.dp),
         backgroundColor = Color(0xFFF3F3F1)
