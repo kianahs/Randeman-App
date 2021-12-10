@@ -109,6 +109,7 @@ fun Navigation(){
             resourcesScreen(navController = navController,featureChoice= entry.arguments?.getString("title") )
 
         }
+
         composable(
             route = Screen.accountFormScreen.route + "/{title}",
             arguments = listOf(
@@ -128,6 +129,13 @@ fun Navigation(){
 
         ){
             resourceFrom(navController = navController)
+
+        }
+        composable(
+            route = Screen.seasonsScreen.route + "/{resourceID}",
+
+            ){  entry ->
+            seasonsScreen(navController = navController,id = entry.arguments?.getString("resourceID") )
 
         }
         composable(
@@ -693,7 +701,7 @@ fun resourceCard( navController: NavController,id:Int,resourceName:String,descri
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { navController.navigate(Screen.tasksScreen.withArgs(id.toString())) },
+            .clickable { navController.navigate(Screen.seasonsScreen.withArgs(id.toString())) },
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(0xFFE3DFDC)
@@ -874,7 +882,7 @@ fun cardElement( title:String, modifier: Modifier = Modifier, icon_shape: @Compo
 }
 @ExperimentalMaterialApi
 @Composable
-fun calendar() {
+fun seasonsScreen(navController: NavController,id:String?) {
     val service = PostsService.create()
     val items = listOf("Winter","Spring","Summer","Autumn").map { " $it" }
     val month1= listOf("January","February","March")
@@ -886,25 +894,25 @@ fun calendar() {
         itemsIndexed(items) { index, item ->
 
             if(index==0)
-                seasons(item,month1,col[index])
+                seasons(navController,item,month1,col[index],id)
             if(index==1)
-                seasons(item,month2,col[index])
+                seasons(navController,item,month2,col[index],id)
             if(index==2)
-                seasons(item,month3,col[index])
+                seasons(navController,item,month3,col[index],id)
             if(index==3)
-                seasons(item,month4,col[index])
+                seasons(navController,item,month4,col[index],id)
         }
 
     }
 }
 @ExperimentalMaterialApi
 @Composable
-fun seasons(name :String, d : List<String>, col : Long) {
+fun seasons(navController: NavController,name :String, d : List<String>, col : Long,id:String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { },
+            ,
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(col)
@@ -944,6 +952,7 @@ fun seasons(name :String, d : List<String>, col : Long) {
                                     .height(40.dp)
                                     .width(123.dp) // here is the trick
                                     .padding(3.dp)
+                                    .clickable { navController.navigate(Screen.tasksScreen.withArgs(id.toString())) }
                             ) {
                                 Text("  "+d.get(index),color = Color(col),fontFamily = FontFamily.Serif,fontSize = 18.sp,fontWeight = FontWeight.ExtraBold) // card's content
 
