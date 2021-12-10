@@ -18,8 +18,11 @@ interface RetroApi {
     @POST("/addResource")
     suspend fun addResource(@Body resource: Resource):Response<PostResponse>
 
-    @GET("/addTask/{id}")
+    @GET("/getTask/{id}")
     suspend fun getTask(@Path("id") id:Int?):List<Task>
+
+    @POST("/addTask/{id}")
+    suspend fun addTask(@Path("id") id: Int?,@Body task:Task):Response<PostResponse>
 
 
     companion object{

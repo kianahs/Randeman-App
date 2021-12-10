@@ -1,7 +1,5 @@
 package com.example.atry
 
-import androidx.hilt.navigation.compose.hiltViewModel
-
 sealed class Screen(val route: String){
     object loginScreen : Screen("login_screen")
     object featuresScreen : Screen("features_screen")
@@ -11,7 +9,7 @@ sealed class Screen(val route: String){
     object tasksScreen : Screen("tasks_screen")
     object taskFormScreen: Screen("taskForm_screen")
 
-    fun withArgs(vararg args: String): String{
+    fun withArgs(vararg args: String?): String{
 
         return buildString {
             append(route)

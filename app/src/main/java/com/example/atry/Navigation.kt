@@ -3,7 +3,6 @@ package com.example.atry
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,8 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.activity.viewModels
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 
@@ -40,11 +37,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -54,7 +49,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
-import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
 @Composable
@@ -130,10 +124,10 @@ fun Navigation(){
 
         }
         composable(
-            route = Screen.taskFormScreen.route
+            route = Screen.taskFormScreen.route + "/{resourceID}",
 
-        ){
-            taskForm(navController = navController)
+        ){  entry ->
+            taskForm(navController = navController,resourceID = entry.arguments?.getString("resourceID"))
 
         }
 
@@ -142,7 +136,8 @@ fun Navigation(){
 }
 
 @Composable
-fun taskForm(navController : NavController){
+fun taskForm(navController : NavController,resourceID:String?){
+        var resourceIDState by rememberSaveable { mutableStateOf(resourceID) }
 
 //    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
 //    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
@@ -197,7 +192,15 @@ fun taskForm(navController : NavController){
                 Spacer(modifier = Modifier.padding(15.dp))
                 textInput(textFieldName = "priority", false)
                 Spacer(modifier = Modifier.padding(15.dp))
-                textInput(textFieldName = "Resource", false)
+                if (resourceID != null) {
+                    OutlinedTextField(
+                        value = resourceIDState.toString(),
+                        onValueChange = { resourceIDState = it },
+                        label = { Text("Resource ID") },
+                        enabled = false,
+                        singleLine = true
+                    )
+                }
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
                     .size(40.dp)
@@ -270,7 +273,7 @@ fun tasksScreen(navController: NavController,id:String?){
         Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
             modifier = Modifier
                 .size(80.dp)
-                .clickable { navController.navigate(Screen.taskFormScreen.route) })
+                .clickable { navController.navigate(Screen.taskFormScreen.withArgs(id.toString())) })
     }
 
 
@@ -434,13 +437,13 @@ fun resourceFrom(navController: NavController) {
                     }
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
-                TextField(
+                OutlinedTextField(
                     value = resourceNameState,
                     onValueChange = { resourceNameState = it },
                     label = { Text("Enter Resource name") }
                 )
                 Spacer(modifier = Modifier.padding(5.dp))
-                TextField(
+                OutlinedTextField(
                     value = resourceDescriptionState,
                     onValueChange = { resourceDescriptionState = it },
                     label = { Text("Enter Description") },
@@ -682,7 +685,7 @@ fun loginScreen(navController: NavController){
 //            }
 //        )
 //        Spacer(modifier = Modifier.padding(15.dp))
-        TextField(
+        OutlinedTextField(
             value = usernameState,
             onValueChange = { usernameState = it },
             label = { Text("Enter Username") }
@@ -707,13 +710,13 @@ fun textInput(textFieldName: String, show: Boolean ) {
 
     var textState by rememberSaveable { mutableStateOf("") }
     if (show) {
-        TextField(
+        OutlinedTextField(
             value = textState,
             onValueChange = { textState = it },
             label = { Text("Enter $textFieldName") }
         )
     }else{
-        TextField(
+        OutlinedTextField(
             value = textState,
             onValueChange = { textState = it },
             label = { Text("Enter $textFieldName") },
