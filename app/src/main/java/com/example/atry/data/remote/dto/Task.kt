@@ -5,6 +5,7 @@ data class Task(
     val duration: Int,
     val name: String,
     val priority: Int,
-    val deadline:String,
-    val unique_id: Int
+    val deadline: String,
+    val unique_id: Int,
+    val resourceName:String
 )

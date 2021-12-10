@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -42,15 +43,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
@@ -70,87 +71,105 @@ fun Navigation(){
     arrayList.add(Resource("CNC3","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
     arrayList.add(Resource("CNC4","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem "))
 
-
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screen.loginScreen.route ){
-        composable(route = Screen.loginScreen.route){
-            loginScreen(navController = navController)
+    Scaffold(
+        topBar = { TopBar() },
+        bottomBar = { BottomNavigationBar(navController) }
+    ) {
+        NavHost(navController = navController, startDestination = Screen.loginScreen.route) {
+            composable(route = Screen.loginScreen.route) {
+                loginScreen(navController = navController)
+            }
+            composable(
+                route = Screen.featuresScreen.route + "/{name}",
+                arguments = listOf(
+                    navArgument("name") {
+                        type = NavType.StringType
+                        defaultValue = "Guest"
+                        nullable = true
+
+                    }
+                )
+            ) { entry ->
+                featuresScreen(
+                    name = entry.arguments?.getString("name"),
+                    navController = navController
+                )
+
+            }
+            composable(
+                route = Screen.resourcesScreen.route + "/{title}",
+                arguments = listOf(
+                    navArgument("title") {
+                        type = NavType.StringType
+                        defaultValue = " "
+                        nullable = true
+
+                    }
+                )
+            ) { entry ->
+                resourcesScreen(
+                    navController = navController,
+                    featureChoice = entry.arguments?.getString("title")
+                )
+
+            }
+
+            composable(
+                route = Screen.accountFormScreen.route + "/{title}",
+                arguments = listOf(
+                    navArgument("title") {
+                        type = NavType.StringType
+                        defaultValue = " "
+                        nullable = true
+
+                    }
+                )
+            ) { entry ->
+                accountForm(featureChoice = entry.arguments?.getString("title"))
+
+            }
+            composable(
+                route = Screen.resourceFormScreen.route
+
+            ) {
+                resourceFrom(navController = navController)
+
+            }
+            composable(
+                route = Screen.seasonsScreen.route + "/{resourceID}",
+
+                ) { entry ->
+                seasonsScreen(
+                    navController = navController,
+                    id = entry.arguments?.getString("resourceID")
+                )
+
+            }
+            composable(
+                route = Screen.tasksScreen.route + "/{resourceID}",
+
+                ) { entry ->
+                tasksScreen(
+                    navController = navController,
+                    id = entry.arguments?.getString("resourceID")
+                )
+
+            }
+            composable(
+                route = Screen.taskFormScreen.route + "/{resourceID}",
+
+                ) { entry ->
+                taskForm(
+                    navController = navController,
+                    resourceID = entry.arguments?.getString("resourceID")
+                )
+
+            }
+
         }
-        composable(
-            route = Screen.featuresScreen.route + "/{name}",
-            arguments = listOf(
-                navArgument("name"){
-                    type = NavType.StringType
-                    defaultValue = "Guest"
-                    nullable = true
-
-                }
-            )
-        ){entry ->
-            featuresScreen(name= entry.arguments?.getString("name"), navController = navController)
-
-        }
-        composable(
-            route = Screen.resourcesScreen.route + "/{title}",
-            arguments = listOf(
-                navArgument("title"){
-                    type = NavType.StringType
-                    defaultValue = " "
-                    nullable = true
-
-                }
-            )
-        ){entry ->
-            resourcesScreen(navController = navController,featureChoice= entry.arguments?.getString("title") )
-
-        }
-
-        composable(
-            route = Screen.accountFormScreen.route + "/{title}",
-            arguments = listOf(
-                navArgument("title"){
-                    type = NavType.StringType
-                    defaultValue = " "
-                    nullable = true
-
-                }
-            )
-        ){entry ->
-            accountForm(featureChoice= entry.arguments?.getString("title") )
-
-        }
-        composable(
-            route = Screen.resourceFormScreen.route
-
-        ){
-            resourceFrom(navController = navController)
-
-        }
-        composable(
-            route = Screen.seasonsScreen.route + "/{resourceID}",
-
-            ){  entry ->
-            seasonsScreen(navController = navController,id = entry.arguments?.getString("resourceID") )
-
-        }
-        composable(
-            route = Screen.tasksScreen.route + "/{resourceID}",
-
-        ){  entry ->
-            tasksScreen(navController = navController,id = entry.arguments?.getString("resourceID") )
-
-        }
-        composable(
-            route = Screen.taskFormScreen.route + "/{resourceID}",
-
-        ){  entry ->
-            taskForm(navController = navController,resourceID = entry.arguments?.getString("resourceID"))
-
-        }
-
     }
-
 }
 
 
@@ -294,7 +313,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                         } else{
                             it.toInt().toString()
                         }
-                         },
+                    },
                     label = { Text("priority") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     singleLine = true
@@ -305,7 +324,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                         value = resourceIDState.toString(),
                         onValueChange = {
                             resourceIDState = it
-                                        },
+                        },
                         label = { Text("Resource ID") },
                         enabled = false,
                         singleLine = true
@@ -369,7 +388,7 @@ fun tasksScreen(navController: NavController,id:String?){
     LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
 
         itemsIndexed(
-           getTaskViewModel.state.value.tasks
+            getTaskViewModel.state.value.tasks
         ){index, item ->
             Box(){
                 Row() {
@@ -377,7 +396,7 @@ fun tasksScreen(navController: NavController,id:String?){
                         modifier = Modifier
                             .size(40.dp)
                             .padding(top = 20.dp)
-                            )
+                    )
 
                     taskCard(modifier = Modifier,task = item)
 
@@ -849,20 +868,21 @@ fun textInput(textFieldName: String, show: Boolean ) {
 @Composable
 fun featuresScreen (name:String?, navController: NavController){
 
-    LazyColumn() {
-        itemsIndexed(
-            listOf<cardStructure>(
-                cardStructure("Resources", { Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
-                cardStructure("Tasks", { Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
-                cardStructure("Setting", { Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
-                cardStructure("Account", { Icon(Icons.Filled.Person,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
-                cardStructure("FAQ", { Icon(Icons.Filled.Search,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }))
+//    LazyColumn() {
+//        itemsIndexed(
+//            listOf<cardStructure>(
+//                cardStructure("Resources", { Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
+//                cardStructure("Tasks", { Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
+//                cardStructure("Setting", { Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
+//                cardStructure("Account", { Icon(Icons.Filled.Person,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }),
+//                cardStructure("FAQ", { Icon(Icons.Filled.Search,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp)) }))
+//
+//        ) { index, item ->
+//            cardElement(item.get_title(), Modifier.fillMaxSize(),item.get_icon(),navController = navController)
+//        }
+//
+//    }
 
-        ) { index, item ->
-            cardElement(item.get_title(), Modifier.fillMaxSize(),item.get_icon(),navController = navController)
-        }
-
-    }
 
 }
 @ExperimentalMaterialApi
@@ -936,6 +956,70 @@ fun seasonsScreen(navController: NavController,id:String?) {
 
     }
 }
+@Composable
+fun TopBar() {
+    TopAppBar(
+        title = { Text(text = "Resource Manager", fontSize = 18.sp) },
+        backgroundColor = colorResource(id = R.color.purple_500),
+        contentColor = Color.White
+    )
+}
+
+
+@Composable
+fun BottomNavigationBar(navController: NavController) {
+    val items = listOf(
+        NavigationItem.Home,
+        NavigationItem.Resources,
+        NavigationItem.Setting,
+        NavigationItem.Account,
+        NavigationItem.FAQ
+    )
+    BottomNavigation(
+        backgroundColor = colorResource(id = R.color.purple_500),
+        contentColor = Color.White
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+        items.forEach { item ->
+            BottomNavigationItem(
+                icon = { Icon(painterResource(id = item.icon), contentDescription = item.title,modifier = Modifier.size(21.dp)) },
+                label = { Text(text = item.title) },
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.White.copy(0.4f),
+                alwaysShowLabel = true,
+                selected = currentRoute == item.route,
+                onClick = {
+                    if(item.route ==NavigationItem.Home.route ){
+                        navController.navigate(Screen.resourcesScreen.withArgs("Resources"))
+                    }
+                    if(item.route ==NavigationItem.Resources.route ){
+                        navController.navigate(Screen.resourcesScreen.withArgs("Resources"))
+                    }
+                    if(item.route ==NavigationItem.Account.route ){
+                        navController.navigate(Screen.accountFormScreen.withArgs("mm"))
+                    }
+//                    navController.navigate(item.route) {
+//
+//                        // Pop up to the start destination of the graph to
+//                        // avoid building up a large stack of destinations
+//                        // on the back stack as users select items
+//                        navController.graph.startDestinationRoute?.let { route ->
+//                            popUpTo(route) {
+//                                saveState = true
+//                            }
+//                        }
+//                        // Avoid multiple copies of the same destination when
+//                        // reselecting the same item
+//                        launchSingleTop = true
+//                        // Restore state when reselecting a previously selected item
+//                        restoreState = true
+//                    }
+                }
+            )
+        }
+    }
+}
 @ExperimentalMaterialApi
 @Composable
 fun seasons(navController: NavController,name :String, d : List<String>, col : Long,id:String?) {
@@ -943,7 +1027,7 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            ,
+        ,
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(col)
@@ -1005,3 +1089,4 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
 
     }
 }
+
