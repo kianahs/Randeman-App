@@ -53,6 +53,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import dagger.hilt.android.AndroidEntryPoint
@@ -124,10 +125,10 @@ fun Navigation(){
 
         }
         composable(
-            route = Screen.tasksScreen.route
+            route = Screen.tasksScreen.route + "/{resourceID}",
 
-        ){
-            tasksScreen(navController = navController)
+        ){  entry ->
+            tasksScreen(navController = navController,id = entry.arguments?.getString("resourceID") )
 
         }
         composable(
@@ -220,37 +221,18 @@ fun taskForm(navController : NavController){
 
 @ExperimentalMaterialApi
 @Composable
-fun tasksScreen(navController: NavController){
+fun tasksScreen(navController: NavController,id:String?){
+    val getTaskViewModel:GetTaskViewModel = hiltViewModel()
+    if (id != null) {
+        getTaskViewModel.getTask(id.toInt())
+    }
 
 
     var count by remember { mutableStateOf(0) }
     val context = LocalContext.current
-    var tasksOne by remember {
-        mutableStateOf(
-            listOf<Task>(
-                Task("refactor",50,500,Resource("CNC","Nothing")),
-                Task("check",50,500,Resource("CNC","Nothing")),
-                Task("repair",50,500,Resource("CNC","Nothing")),
-                Task("run",50,500,Resource("CNC","Nothing")),
-                Task("repair",50,500,Resource("CNC","Nothing"))
 
-            )
-        )
-    }
-    val allTasks = listOf(Task("refactor",50,500,Resource("CNC","Nothing")),
-        Task("check",50,500,Resource("CNC","Nothing")),
-        Task("repair",50,500,Resource("CNC","Nothing")),
-        Task("run",50,500,Resource("CNC","Nothing")),
-        Task("repair",50,500,Resource("CNC","Nothing")),
-        Task("A",50,500,Resource("CNC","Nothing")),
-        Task("B",50,500,Resource("CNC","Nothing")),
-        Task("C",50,500,Resource("CNC","Nothing")),
-        Task("D",50,500,Resource("CNC","Nothing"))
-    )
-
-
-
-    Box(modifier = Modifier.fillMaxWidth()
+    Box(modifier = Modifier
+        .fillMaxWidth()
         .fillMaxWidth()) {
         Button(onClick = { count += 1;
             Toast.makeText(
@@ -259,13 +241,7 @@ fun tasksScreen(navController: NavController){
                 Toast.LENGTH_SHORT
             ).show();
             print(count);
-            tasksOne = listOf(
-                Task("A",50,500,Resource("CNC","Nothing")),
-                Task("B",50,500,Resource("CNC","Nothing")),
-                Task("C",50,500,Resource("CNC","Nothing")),
-                Task("D",50,500,Resource("CNC","Nothing"))
 
-            )
         }, modifier = Modifier.padding(start= 200.dp)) {
             Text(text = "state change")
         }
@@ -275,22 +251,21 @@ fun tasksScreen(navController: NavController){
 
                 withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
                 ) {
-                    append("Today")
+                    append("Today${id}")
                 }
 
             },
             modifier = Modifier.padding(10.dp)
         )
 
-        dayCardScroller()
+        dayCardScroller(viewmodel = getTaskViewModel)
     }
 
     val sala = listOf(1,2,3)
     LazyColumn(modifier = Modifier.padding(top=200.dp, start = 50.dp,end=10.dp)){
 
         itemsIndexed(
-           tasksOne
-
+           getTaskViewModel.state.value.tasks
         ){index, item ->
             Box(){
                 Row() {
@@ -299,7 +274,9 @@ fun tasksScreen(navController: NavController){
                             .size(40.dp)
                             .padding(top = 20.dp)
                             )
-                    taskCard(modifier = Modifier,task = tasksOne[index] )
+
+                    taskCard(modifier = Modifier,task = item)
+
                 }
 
             }
@@ -343,7 +320,7 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 //                    append("welcome to ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color.White, fontSize = 20.sp)
                         ) {
-                            append(task.get_task_name())
+                            append(task.name)
                         }
                     }
                 )
@@ -354,9 +331,9 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
                     withStyle(style = SpanStyle(color = Color.White, fontSize = 10.sp),
 
                         ) {
-                        append("Resource:"+task.get_task_resource().resource_name+"\n")
-                        append("Priority:"+task.get_task_priority().toString()+"\n")
-                        append("Duration:"+task.get_task_duration().toString()+"\n")
+                        append("Resource:"+"\n")
+                        append("Priority:"+task.priority.toString()+"\n")
+                        append("Duration:"+task.duration.toString()+"\n")
                     }
                 })
             }
@@ -372,12 +349,12 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 @ExperimentalMaterialApi
 @Composable
-fun dayCard(  modifier: Modifier = Modifier, date: Date){
+fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel){
 
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable { selectedDay.value = date.getDayNumber().toInt() },
+            .clickable { viewmodel.deleteTasks() },
         elevation = 5.dp,
         shape = RoundedCornerShape(10.dp),
         backgroundColor = Color(0xFFF3F3F1)
@@ -414,7 +391,7 @@ fun dayCard(  modifier: Modifier = Modifier, date: Date){
 }
 @ExperimentalMaterialApi
 @Composable
-fun dayCardScroller() {
+fun dayCardScroller(viewmodel: GetTaskViewModel) {
     val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
         Date("Mon", "3"),
         Date("Tue", "4"),
@@ -429,7 +406,7 @@ fun dayCardScroller() {
 
         ) {
         itemsIndexed(items) { index, item ->
-            dayCard( modifier= Modifier,item)
+            dayCard( modifier= Modifier,item, viewmodel)
         }
 
     }
@@ -627,7 +604,7 @@ fun  resourcesScreen( navController: NavController,featureChoice:String?){
     LazyColumn(){
 
         itemsIndexed(viewModel.state.value.resources){index, item ->
-            resourceCard(navController = navController,item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
+            resourceCard(navController = navController,item.unique_id,item.name,item.description, Modifier.fillMaxSize(),{Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))})
         }
     }
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
@@ -643,13 +620,13 @@ fun  resourcesScreen( navController: NavController,featureChoice:String?){
 
 @ExperimentalMaterialApi
 @Composable
-fun resourceCard( navController: NavController,resourceName:String,description:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
+fun resourceCard( navController: NavController,id:Int,resourceName:String,description:String, modifier: Modifier = Modifier, icon_shape: @Composable() () -> Unit){
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable { navController.navigate(Screen.tasksScreen.route) },
+            .clickable { navController.navigate(Screen.tasksScreen.withArgs(id.toString())) },
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = Color(0xFFE3DFDC)
