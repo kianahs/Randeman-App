@@ -237,7 +237,7 @@ fun taskForm(navController : NavController,resourceID:String?){
     var durationState by rememberSaveable{mutableStateOf("")}
     var deadlineState by rememberSaveable {mutableStateOf("")}
     var priorityState by rememberSaveable{mutableStateOf("0")}
-
+    val addTaskViewModel:AddTaskViewModel= hiltViewModel()
     deadlineState = "3434"
     val context = LocalContext.current
     val shape = RoundedCornerShape(topStart = 80.dp)
@@ -280,7 +280,7 @@ fun taskForm(navController : NavController,resourceID:String?){
 //                    append("welcome to ")
                             withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
                             ) {
-                                append("Add task${deadlineState}")
+                                append("Add task")
                             }
                         }
                     )
@@ -295,7 +295,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                 OutlinedTextField(
                     value = taskNameState,
                     onValueChange = {
-                        resourceIDState = it
+                        taskNameState = it
                     },
                     label = { Text("Task name") },
                     singleLine = true
@@ -311,7 +311,49 @@ fun taskForm(navController : NavController,resourceID:String?){
                     singleLine = true
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
-                showDatePicker(context = context,deadlineState,onDateChanged = {deadlineState = it})
+                val year: Int
+                val month: Int
+                val day: Int
+
+                val calender = Calendar.getInstance()
+                year = calender.get(Calendar.YEAR)
+                month = calender.get(Calendar.MONTH)
+                day = calender.get(Calendar.DAY_OF_MONTH)
+                calender.time = Date()
+
+                val date = remember {mutableStateOf("")}
+                val datePickerDialog = DatePickerDialog(
+                    context,
+                    { _: DatePicker, year:Int, month:Int, dayOfMonth: Int ->
+                        date.value = "$dayOfMonth/$month/$year"
+                    }, year, month, day
+                )
+
+                Row(
+                    modifier = Modifier.padding(start = 50.dp, end = 50.dp),
+//        verticalArrangement = Arrangement.Center,
+//        horizontalAlignment = Alignment.CenterHorizontally
+                ){
+//        Text(text = "Selected Date: ${date.value}")
+
+                    deadlineState = date.value
+                    OutlinedTextField(
+                        modifier = Modifier.width(240.dp),
+                        value = deadlineState,
+                        onValueChange = {deadlineState=it},
+                        label = { Text("Deadline") },
+                        enabled = false,
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Icon(Icons.Filled.DateRange,"",tint = Color(0xFF4552B8),modifier = Modifier
+                        .size(30.dp)
+                        .clickable { datePickerDialog.show() }
+                        .padding(top = 8.dp))
+
+
+                }
+
                 Spacer(modifier = Modifier.padding(15.dp))
                 OutlinedTextField(
                     value = priorityState,
@@ -341,8 +383,23 @@ fun taskForm(navController : NavController,resourceID:String?){
                 Spacer(modifier = Modifier.padding(15.dp))
                 Icon(Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
                     .size(130.dp)
-                    .padding(bottom=50.dp)
-                    .clickable { navController.navigate(Screen.tasksScreen.withArgs("1")) }) //bayad eslah she be resource id
+                    .padding(bottom = 50.dp)
+                    .clickable {
+                        val task: com.example.atry.data.remote.dto.Task =
+                            com.example.atry.data.remote.dto.Task(
+                                " ",
+                                durationState.toInt(),
+                                taskNameState,
+                                priorityState.toInt(),
+                                deadlineState,
+                                -1,
+                                " "
+                            )
+                        if (resourceID != null) {
+                            addTaskViewModel.addResource(resourceID.toInt(), task = task)
+                        }
+                        navController.navigate(Screen.tasksScreen.withArgs(resourceID))
+                    }) //bayad eslah she be resource id
 //                Spacer(modifier = Modifier.padding(15.dp))
 
             }
@@ -671,7 +728,7 @@ fun accountForm(featureChoice: String?) {
             ) {
                 Box(modifier = Modifier
                     .size(120.dp)
-                    .fillMaxHeight(10f)
+
                     .clip(shape2)
                     .background(Color.Gray)
                 ){
@@ -683,14 +740,13 @@ fun accountForm(featureChoice: String?) {
 
                 Box(modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.20f)
+
                     .background(Color.White)
 
                 ){
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.4f),
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -707,7 +763,7 @@ fun accountForm(featureChoice: String?) {
                 textInput(textFieldName = "Password", false)
                 Spacer(modifier = Modifier.padding(5.dp))
                 textInput(textFieldName = "Company name", true)
-                Spacer(modifier = Modifier.padding(15.dp))
+                Spacer(modifier = Modifier.padding(0.5.dp))
                 Icon(Icons.Outlined.CheckCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(40.dp))
 
 
@@ -816,14 +872,16 @@ fun resourceCard( navController: NavController,id:Int,resourceName:String,descri
 fun loginScreen(navController: NavController){
 
     var usernameState by rememberSaveable { mutableStateOf("") }
-//    val passwordState = remember { mutableStateOf(TextFieldValue()) }
+    var passwordState by rememberSaveable { mutableStateOf("") }
+    Box(modifier = Modifier
+        .background(Color(0xFF6C5DBD))
+        .fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(painterResource(R.drawable.logo3),"logo")
 //        Text(
 //            buildAnnotatedString {
 ////                    append("welcome to ")
@@ -834,23 +892,57 @@ fun loginScreen(navController: NavController){
 //            }
 //        )
 //        Spacer(modifier = Modifier.padding(15.dp))
-        OutlinedTextField(
-            value = usernameState,
-            onValueChange = { usernameState = it },
-            label = { Text("Enter Username") }
-        )
+            Box(modifier = Modifier
+                .background(Color.White, RoundedCornerShape(40.dp))
+                .fillMaxHeight(0.65f)
+                .fillMaxWidth(0.8f)
+                .clip(
+                    RoundedCornerShape(40.dp)
+                )) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(painterResource(R.drawable.logop75),"logo")
+                    TextField(
+                        value = usernameState,
+                        onValueChange = { usernameState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Username")
+                        }
+                    )
 //        textInput(textFieldName = "Username",true)
-        Spacer(modifier = Modifier.padding(5.dp))
-        textInput(textFieldName = "Password", false)
-        Spacer(modifier = Modifier.padding(15.dp))
-        Button(onClick = { navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
-            Text(text = "Login")
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextField(
+                        value = passwordState,
+                        onValueChange = { passwordState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("password") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    )
+                    Spacer(modifier = Modifier.padding(15.dp))
+                    Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
+                        0xFF6C5DBD
+                    )
+                    ),onClick = { navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
+                        Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Login")
+
+                    }
+
+                }
+
+
+            }
+
+
 
         }
 
 
-    }
 
+    }
 
 
 }
