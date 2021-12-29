@@ -581,15 +581,21 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 @ExperimentalMaterialApi
 @Composable
-fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel){
-
+fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel){
+//    var dayCardBackground  by rememberSaveable { mutableStateOf(Color(0xFFF3F3F1)) }
+    var colorCondition = if(getDayViewModel.state.value.equals("${date.getDayName()} ${date.getDayNumber()}")) Color(
+        0xFFDED2F5
+    ) else Color(0xFFF3F3F1)
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable { viewmodel.deleteTasks() },
+            .clickable { viewmodel.deleteTasks()
+                       getDayViewModel.setDay(date.getDayName(),date.getDayNumber())
+
+                       },
         elevation = 5.dp,
         shape = RoundedCornerShape(10.dp),
-        backgroundColor = Color(0xFFF3F3F1)
+        backgroundColor = colorCondition
 
     ) {
         Column(Modifier.padding(10.dp)) {
@@ -624,6 +630,7 @@ fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewM
 @ExperimentalMaterialApi
 @Composable
 fun dayCardScroller(viewmodel: GetTaskViewModel) {
+    val getDayViewModel: GetDayViewModel = hiltViewModel()
     val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
         Date("Mon", "3"),
         Date("Tue", "4"),
@@ -638,7 +645,7 @@ fun dayCardScroller(viewmodel: GetTaskViewModel) {
 
         ) {
         itemsIndexed(items) { index, item ->
-            dayCard( modifier= Modifier,item, viewmodel)
+            dayCard( modifier= Modifier,item, viewmodel, getDayViewModel)
         }
 
     }
