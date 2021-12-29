@@ -71,23 +71,20 @@ public fun currentRoute(navController: NavHostController): String? {
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
-
-    val arrayList = ArrayList<Resource>()
-    arrayList.add(Resource("CNC1","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
-    arrayList.add(Resource("CNC2","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
-    arrayList.add(Resource("CNC3","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
-    arrayList.add(Resource("CNC4","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem "))
-
+    val notBar = arrayOf("login_screen","register_screen")
     val navController = rememberNavController()
 
     Scaffold(
-        topBar ={if (currentRoute(navController = navController)!="login_screen") TopBar() },
-        bottomBar = { if (currentRoute(navController = navController)!="login_screen") BottomNavigationBar(navController) }
+        topBar ={if (currentRoute(navController = navController) !in notBar )  TopBar() },
+        bottomBar = { if (currentRoute(navController = navController) !in notBar ) BottomNavigationBar(navController) }
 
     ) {
         NavHost(navController = navController, startDestination = Screen.loginScreen.route) {
             composable(route = Screen.loginScreen.route) {
                 loginScreen(navController = navController)
+            }
+            composable(route = Screen.registerScreen.route) {
+                registerScreen(navController = navController)
             }
             composable(
                 route = Screen.featuresScreen.route + "/{name}",
@@ -437,7 +434,7 @@ fun tasksScreen(navController: NavController,id:String?){
 
                 withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
                 ) {
-                    append("Today${id}")
+                    append("Today")
                 }
 
             },
@@ -936,7 +933,19 @@ fun loginScreen(navController: NavController){
 
             }
 
-
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(
+                buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                        0xFFF8F7F7
+                    ), fontSize = 12.sp)
+                    ) {
+                        append("Register")
+                    }
+                },
+                modifier = Modifier.clickable { navController.navigate(Screen.registerScreen.route) }
+            )
 
         }
 
@@ -1535,4 +1544,137 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
 
     }
 }
+
+
+@Composable
+fun registerScreen(navController: NavController){
+
+    var firstnameState by rememberSaveable { mutableStateOf("") }
+    var lastnameState by rememberSaveable { mutableStateOf("") }
+    var EmailState by rememberSaveable { mutableStateOf("") }
+    var passwordState by rememberSaveable { mutableStateOf("") }
+
+    Box(modifier = Modifier
+        .background(Color(0xFF6C5DBD))
+        .fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+
+            Box(modifier = Modifier
+                .background(Color.White, RoundedCornerShape(40.dp))
+                .fillMaxHeight(0.8f)
+                .fillMaxWidth(0.8f)
+                .clip(
+                    RoundedCornerShape(40.dp)
+                )) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(painterResource(R.drawable.logop75),"logo")
+                    TextField(
+                        value = firstnameState,
+                        onValueChange = { firstnameState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Name")
+                        }
+                    )
+//        textInput(textFieldName = "Username",true)
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextField(
+                        value = lastnameState,
+                        onValueChange = { lastnameState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Lastname")
+                        }
+                    )
+//        textInput(textFieldName = "Username",true)
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextField(
+                        value = EmailState,
+                        onValueChange = { EmailState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Email")
+                        }
+                    )
+//        textInput(textFieldName = "Username",true)
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextField(
+                        value = passwordState,
+                        onValueChange = { passwordState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Password") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    RadioButton()
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
+                        0xFF6C5DBD
+                    )
+                    ),onClick = { navController.navigate(Screen.featuresScreen.withArgs(firstnameState))}) {
+                        Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Register")
+
+                    }
+//                    Spacer(modifier = Modifier.padding(1.dp))
+
+                }
+
+            }
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(
+                buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                        0xFFF8F7F7
+                    ), fontSize = 12.sp)
+                    ) {
+                        append("Login")
+                    }
+                },
+                modifier = Modifier.clickable { navController.navigate(Screen.loginScreen.route) }
+            )
+        }
+
+
+
+
+
+    }
+
+
+}
+
+
+@Composable
+fun RadioButton() {
+    Column(
+
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val selectedType = remember { mutableStateOf("") }
+        Spacer(modifier = Modifier.size(5.dp))
+        Row {
+            RadioButton(selected = selectedType.value == "Company", onClick = {
+                selectedType.value = "Company"
+            })
+            Spacer(modifier = Modifier.size(5.dp))
+            Text("Company")
+            Spacer(modifier = Modifier.size(16.dp))
+            RadioButton(selected = selectedType.value == "Contributor", onClick = {
+                selectedType.value = "Contributor"
+            })
+            Spacer(modifier = Modifier.size(5.dp))
+            Text("Contributor")
+        }
+    }
+}
+
+
 

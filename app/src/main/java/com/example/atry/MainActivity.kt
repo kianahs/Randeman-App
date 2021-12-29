@@ -19,14 +19,17 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
@@ -36,6 +39,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,7 +76,7 @@ class MainActivity : ComponentActivity() {
 
 
             Navigation()
-
+//            registerScreen(rememberNavController())
 //            newScreen()
 
 //            resourcesScreen(arrayList)
@@ -112,9 +117,6 @@ class MainActivity : ComponentActivity() {
 //}
 
 
-
-
-
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
@@ -125,5 +127,9 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
 //    newScreen()
+//    registerScreen(rememberNavController())
+//    RadioButton()
+//    loginScreen(navController = rememberNavController())
 }
+
 
