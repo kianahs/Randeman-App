@@ -5,9 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.atry.data.remote.RetroApi
-import com.example.atry.data.remote.dto.Resource
 import com.example.atry.data.remote.dto.Task
-import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,8 +16,8 @@ class AddTaskViewModel @Inject constructor(
 
 ):ViewModel(){
 
-    private val _state = mutableStateOf(AddResourceState())
-    val state: State<AddResourceState> = _state
+    private val _state = mutableStateOf(PostResponseState())
+    val state: State<PostResponseState> = _state
 
     fun addResource(id:Int,task:Task){
         viewModelScope.launch {

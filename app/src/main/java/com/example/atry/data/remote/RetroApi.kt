@@ -8,6 +8,8 @@ import retrofit2.http.*
 import retrofit2.http.GET
 
 import android.R.string.no
+import com.example.atry.data.remote.dto.Login
+import com.example.atry.data.remote.dto.Register
 import retrofit2.Call
 
 
@@ -23,6 +25,12 @@ interface RetroApi {
 
     @POST("/addTask/{id}")
     suspend fun addTask(@Path("id") id: Int?,@Body task:Task):Response<PostResponse>
+
+    @POST ("/login")
+    suspend fun login(@Body loginData: Login):Response<PostResponse>
+
+    @POST ("/register")
+    suspend fun register(@Body registerData: Register):Response<PostResponse>
 
 
     companion object{

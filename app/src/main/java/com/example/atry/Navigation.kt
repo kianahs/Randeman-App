@@ -54,6 +54,8 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import com.example.atry.data.remote.dto.Login
+import com.example.atry.data.remote.dto.Register
 import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
@@ -63,6 +65,7 @@ import kotlin.collections.ArrayList
 
 
 var selectedDay = mutableStateOf(1)
+var userID = mutableStateOf(-1)
 @Composable
 public fun currentRoute(navController: NavHostController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -867,7 +870,7 @@ fun resourceCard( navController: NavController,id:Int,resourceName:String,descri
 
 @Composable
 fun loginScreen(navController: NavController){
-
+    val loginViewModel:LoginViewModel = hiltViewModel()
     var usernameState by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf("") }
     Box(modifier = Modifier
@@ -923,7 +926,10 @@ fun loginScreen(navController: NavController){
                     Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
                         0xFF6C5DBD
                     )
-                    ),onClick = { navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
+                    ),onClick = {
+                        val loginData:Login = Login(usernameState,passwordState)
+                        loginViewModel.login(loginData = loginData)
+                        navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
                         Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Login")
 
                     }
@@ -1548,11 +1554,12 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
 
 @Composable
 fun registerScreen(navController: NavController){
-
+    val registerViewModel:RegisterViewModel = hiltViewModel()
     var firstnameState by rememberSaveable { mutableStateOf("") }
     var lastnameState by rememberSaveable { mutableStateOf("") }
     var EmailState by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf("") }
+    var selectedType by rememberSaveable { mutableStateOf("") }
 
     Box(modifier = Modifier
         .background(Color(0xFF6C5DBD))
@@ -1613,12 +1620,34 @@ fun registerScreen(navController: NavController){
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                     )
                     Spacer(modifier = Modifier.padding(5.dp))
-                    RadioButton()
+                    Column(
+
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Spacer(modifier = Modifier.size(5.dp))
+                        Row {
+                            RadioButton(selected = selectedType == "company", onClick = {
+                                selectedType = "company"
+                            })
+                            Spacer(modifier = Modifier.size(5.dp))
+                            Text("Company")
+                            Spacer(modifier = Modifier.size(16.dp))
+                            RadioButton(selected = selectedType == "contributor", onClick = {
+                                selectedType = "contributor"
+                            })
+                            Spacer(modifier = Modifier.size(5.dp))
+                            Text("Contributor")
+                        }
+                    }
                     Spacer(modifier = Modifier.padding(10.dp))
                     Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
                         0xFF6C5DBD
                     )
-                    ),onClick = { navController.navigate(Screen.featuresScreen.withArgs(firstnameState))}) {
+                    ),onClick = {
+                        val registerData = Register(firstnameState,lastnameState,EmailState,passwordState,selectedType)
+                        registerViewModel.register(registerData)
+                        navController.navigate(Screen.featuresScreen.withArgs(firstnameState))}) {
                         Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Register")
 
                     }
@@ -1638,7 +1667,9 @@ fun registerScreen(navController: NavController){
                         append("Login")
                     }
                 },
-                modifier = Modifier.clickable { navController.navigate(Screen.loginScreen.route) }
+                modifier = Modifier.clickable {
+
+                    navController.navigate(Screen.loginScreen.route) }
             )
         }
 
@@ -1652,29 +1683,7 @@ fun registerScreen(navController: NavController){
 }
 
 
-@Composable
-fun RadioButton() {
-    Column(
 
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val selectedType = remember { mutableStateOf("") }
-        Spacer(modifier = Modifier.size(5.dp))
-        Row {
-            RadioButton(selected = selectedType.value == "Company", onClick = {
-                selectedType.value = "Company"
-            })
-            Spacer(modifier = Modifier.size(5.dp))
-            Text("Company")
-            Spacer(modifier = Modifier.size(16.dp))
-            RadioButton(selected = selectedType.value == "Contributor", onClick = {
-                selectedType.value = "Contributor"
-            })
-            Spacer(modifier = Modifier.size(5.dp))
-            Text("Contributor")
-        }
-    }
-}
 
 
 
