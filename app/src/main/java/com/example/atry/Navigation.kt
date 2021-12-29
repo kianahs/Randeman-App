@@ -153,12 +153,20 @@ fun Navigation(){
 
             }
             composable(
-                route = Screen.tasksScreen.route + "/{resourceID}",
+                route = Screen.tasksScreen.route + "/{resourceID}/{month}",
+                arguments = listOf(
+                    navArgument("month") {
+                        type = NavType.StringType
+                        defaultValue = " "
+                        nullable = true
 
-                ) { entry ->
+                    }
+                )
+            ) { entry ->
                 tasksScreen(
                     navController = navController,
-                    id = entry.arguments?.getString("resourceID")
+                    id = entry.arguments?.getString("resourceID"),
+                    month = entry.arguments?.getString("month")
                 )
 
             }
@@ -414,7 +422,7 @@ fun taskForm(navController : NavController,resourceID:String?){
 
 @ExperimentalMaterialApi
 @Composable
-fun tasksScreen(navController: NavController,id:String?){
+fun tasksScreen(navController: NavController,id:String?, month:String?){
     val getTaskViewModel:GetTaskViewModel = hiltViewModel()
     if (id != null && !getTaskViewModel.dataLoaded.value) {
         getTaskViewModel.getTask(id.toInt())
@@ -428,18 +436,54 @@ fun tasksScreen(navController: NavController,id:String?){
         .fillMaxWidth()
         .fillMaxWidth()) {
 
-        Text(
-            buildAnnotatedString {
+
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween){
+            Column() {
+                Text(
+                    buildAnnotatedString {
 //                    append("welcome to ")
 
-                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
-                ) {
-                    append("Today")
-                }
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                        ) {
+                            append("Today")
+                        }
 
-            },
-            modifier = Modifier.padding(10.dp)
-        )
+                    },
+                    modifier = Modifier.padding(10.dp)
+                )
+                Text(
+                    buildAnnotatedString {
+//                    append("welcome to ")
+
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
+                            0xFFB0B0B3
+                        ), fontSize = 10.sp)
+                        ) {
+                            append("resource_id :$id ")
+                        }
+
+                    },
+                    modifier = Modifier.padding(start=10.dp,bottom = 5.dp, top=5.dp)
+                )
+            }
+
+            Text(
+                buildAnnotatedString {
+//                    append("welcome to ")
+
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color(0xFF4552B8), fontSize = 20.sp)
+                    ) {
+                        append("$month")
+                    }
+
+                },
+                modifier = Modifier.padding(10.dp)
+            )
+        }
+
+
 
 
         dayCardScroller(viewmodel = getTaskViewModel)
@@ -1525,7 +1569,7 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
                                     .clickable {
                                         navController.navigate(
                                             Screen.tasksScreen.withArgs(
-                                                id.toString()
+                                                id.toString(), "  " + d.get(index)
                                             )
                                         )
                                     }
