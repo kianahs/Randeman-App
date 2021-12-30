@@ -11,6 +11,7 @@ sealed class Screen(val route: String){
     object taskFormScreen: Screen("taskForm_screen")
     object registerScreen: Screen("register_screen")
     object contributorScreen: Screen("contributor_screen")
+    object FAQScreen: Screen("FAQ_screen")
 
     fun withArgs(vararg args: String?): String{
 

@@ -4,6 +4,9 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,8 +32,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +59,7 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import com.example.atry.data.remote.dto.FAQItem
 import com.example.atry.data.remote.dto.Login
 import com.example.atry.data.remote.dto.Register
 import com.example.atry.data.remote.dto.Task
@@ -71,6 +77,8 @@ public fun currentRoute(navController: NavHostController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route
 }
+@OptIn(ExperimentalAnimationApi::class)
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
@@ -185,6 +193,9 @@ fun Navigation(){
             }
             composable(route = Screen.contributorScreen.route) {
                 contributorForm(navController = navController)
+            }
+            composable(route = Screen.FAQScreen.route) {
+                FAQScreen(navController = navController)
             }
 
         }
@@ -595,10 +606,11 @@ fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewM
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable { viewmodel.deleteTasks()
-                       getDayViewModel.setDay(date.getDayName(),date.getDayNumber())
+            .clickable {
+                viewmodel.deleteTasks()
+                getDayViewModel.setDay(date.getDayName(), date.getDayNumber())
 
-                       },
+            },
         elevation = 5.dp,
         shape = RoundedCornerShape(10.dp),
         backgroundColor = colorCondition
@@ -1231,7 +1243,9 @@ fun contributorScroller(navController: NavController) {
 
 
         Icon(Icons.Filled.Edit,"",tint = Color(0xFF4552B8),
-            modifier = Modifier.size(40.dp).clickable { navController.navigate(Screen.contributorScreen.route) }
+            modifier = Modifier
+                .size(40.dp)
+                .clickable { navController.navigate(Screen.contributorScreen.route) }
 
         )
 
@@ -1485,7 +1499,6 @@ fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         NavigationItem.Home,
         NavigationItem.Resources,
-        NavigationItem.Setting,
         NavigationItem.Account,
         NavigationItem.FAQ
     )
@@ -1513,6 +1526,9 @@ fun BottomNavigationBar(navController: NavController) {
                     }
                     if(item.route ==NavigationItem.Account.route ){
                         navController.navigate(Screen.accountFormScreen.withArgs("mm"))
+                    }
+                    if(item.route ==NavigationItem.FAQ.route ){
+                        navController.navigate(Screen.FAQScreen.route)
                     }
 //                    navController.navigate(item.route) {
 //
@@ -1788,7 +1804,122 @@ fun contributorForm(navController: NavController) {
     }
 
 }
+@ExperimentalAnimationApi
+@ExperimentalMaterialApi
+@Composable
+fun MyExpandedList(title:String ,content:String ) {
+    var expanded by remember { mutableStateOf(false) }
 
+    val rotateState = animateFloatAsState(
+        targetValue = if (expanded) 180F else 0F,
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+
+        Card(onClick = { expanded = !expanded }, backgroundColor =  Color.White) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color(0xFF4552B8),
+                            fontSize = 20.sp
+                        )
+                    ) {
+                        append("$title")
+                    }
+                }, modifier=Modifier.fillMaxWidth(0.9F))
+
+                Icon(
+                    Icons.Default.ArrowDropDown, "",
+                    modifier = Modifier.rotate(rotateState.value)
+                )
+            }
+        }
+        Divider()
+        AnimatedVisibility(
+            visible = expanded,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF673AB7))
+                    .padding(16.dp)
+            ) {
+                Text(buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFFFFFFFF),
+                            fontSize = 15.sp
+                        )
+                    ) {
+                        append("$content")
+                    }
+                }, modifier=Modifier.fillMaxWidth(0.9F))
+            }
+        }
+    }
+}
+@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterialApi::class)
+@ExperimentalAnimationApi
+@Composable
+
+fun FAQScreen(navController: NavController){
+
+
+    val items = listOf<FAQItem>(
+        FAQItem("راندمان چیست؟", "اپلیکیشن بستری را برای کارفرما فراهم می کند تا بتواند منابع خود را مدیریت کند.برای مثال با افزودن هر منبع و تسک های مربوط به آن منبع و تعیین اهمیت آن تسک و تسک های پیش نیاز(در صورت وجود) از جدول زمانی کار آن منبع که توسط اپلیکیشن ساخته می شود،مطلع می شوند و زمان خالی آن منبع را پیدا کرده و با تسک دیگری پر می کنند در نتیجه راندمان منبع را افزایش می دهند."),
+        FAQItem("چرا از راندمان استفاده کنم؟", "امروزه در صنعت کارفرمایان متعددی به دنبال مدیریت منابع خود هستند تا بتوانند راندمان منابع خود را افزایش دهند. در این حیطه نرم افزار هایی مانند Microsoft project وجود دارند اما به علت پیچیدگی کار با این نرم افزارها و نبود اپلیکیشن های مناسب با کاربری آسان و کمبود افراد متخصص در این نرم افزارها، در صنعت ایران به صورت عمده استفاده نمی شوند. اغلب کارفرمایان تنها به دنبال مدیریت منابع خود و تسک های همان منبع می باشند و نیازی به سایر امکانات نرم افزار های پیچیده ندارند. "),
+        FAQItem("تفاوت راندمان با برنامه های مشابه چیست؟", "مدیریت آسان منابع یک کارفرما بدون نیاز به فرد متخصص یا یادگیری نرم افزار های پیچیده و از میان برداشتن برنامه ریزی های نوشتاری.در این حیطه نرم افزار هایی مانند Microsoft project وجود دارند اما به علت پیچیدگی کار با این نرم افزارها و نبود اپلیکیشن های مناسب با کاربری آسان و کمبود افراد متخصص در این نرم افزارها، در صنعت ایران به صورت عمده استفاده نمی شوند. اغلب کارفرمایان تنها به دنبال مدیریت منابع خود و تسک های همان منبع می باشند و نیازی به سایر امکانات نرم افزار های پیچیده ندارند."),
+        FAQItem("هدف و کارابی نهایی راندمان چیست؟", "ایجاد یک بستر مناسب برای کارفرمایان در صنعت به گونه ای که بدون آموزش خاص و استخدام نیروی متخصص به سادگی منابع خود را مدیریت کنند و راندمان منابع را از طریق یافتن و پر کردن زمان های خالی آن منبع افزایش دهند."),
+        )
+
+    Column(modifier = Modifier.fillMaxSize()){
+        Text(buildAnnotatedString {
+//                    append("welcome to ")
+            withStyle(
+                style = SpanStyle(
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFF4552B8),
+                    fontSize = 40.sp
+                )
+            ) {
+                append("FAQ")
+            }
+        }, textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(4.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
+        LazyColumn(modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 40.dp), horizontalAlignment = Alignment.CenterHorizontally){
+
+            itemsIndexed(
+                items
+            ){index, item ->
+                MyExpandedList(title = item.getTitle(), content = item.getContent())
+
+            }
+        }
+
+    }
+
+
+
+}
 
 
 

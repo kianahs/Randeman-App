@@ -11,6 +11,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +35,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
@@ -71,14 +75,16 @@ import com.example.atry.Date as Date1
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 //            showDatePicker(this)
 //            dayCardScroller()
 
-
+//            FAQScreen()
             Navigation()
+//            MyExpandedList()
 //            registerScreen(rememberNavController())
 //            newScreen()
 
@@ -119,11 +125,13 @@ class MainActivity : ComponentActivity() {
 //
 //}
 
+
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
 
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Preview(showBackground = true)
 @Composable
@@ -133,6 +141,7 @@ fun DefaultPreview() {
 //    RadioButton()
 //    loginScreen(navController = rememberNavController())
 //    ContributorForm()
+//    MyExpandedList()
 }
 
 
