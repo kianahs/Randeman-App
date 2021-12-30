@@ -24,7 +24,7 @@ class GetDayInfoViewModel @Inject constructor(
     val dataLoaded = mutableStateOf(false)
 
 
-    fun getTask(month:String){
+    fun findDaysOfMonth(month:String){
         viewModelScope.launch {
             loading.value = true
             try {

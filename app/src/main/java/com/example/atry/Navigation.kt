@@ -54,9 +54,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
-import com.example.atry.data.remote.dto.FAQItem
-import com.example.atry.data.remote.dto.Login
-import com.example.atry.data.remote.dto.Register
+import com.example.atry.data.remote.dto.*
 import com.example.atry.data.remote.dto.Task
 import com.example.atry.viewModels.*
 import com.plcoding.ktorclientandroid.data.remote.PostsService
@@ -506,7 +504,9 @@ fun tasksScreen(navController: NavController,id:String?, month:String?){
 
 
 
-        dayCardScroller(viewmodel = getTaskViewModel, getDayViewModel = getDayViewModel)
+        if (month != null) {
+            dayCardScroller(viewmodel = getTaskViewModel, getDayViewModel = getDayViewModel, month)
+        }
 
     }
     CircularProgressBar(isDisplayed = getTaskViewModel.state.value.isLoading)
@@ -603,9 +603,9 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 @ExperimentalMaterialApi
 @Composable
-fun dayCard(modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel){
+fun dayCard(modifier: Modifier = Modifier, date: DayInfo, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel){
 //    var dayCardBackground  by rememberSaveable { mutableStateOf(Color(0xFFF3F3F1)) }
-    var colorCondition = if(getDayViewModel.state.value.equals("${date.getDayName()} ${date.getDayNumber()}")) Color(
+    var colorCondition = if(getDayViewModel.state.value.equals("${date.daysOfWeek.substring(0,3)} ${date.daysOfMonth.toString()}")) Color(
         0xFFDED2F5
     ) else Color(0xFFF3F3F1)
     Card(
@@ -613,7 +613,7 @@ fun dayCard(modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewMod
             .padding(8.dp)
             .clickable {
                 viewmodel.deleteTasks()
-                getDayViewModel.setDay(date.getDayName(), date.getDayNumber())
+                getDayViewModel.setDay(date.daysOfWeek.substring(0,3), date.daysOfMonth.toString() )
 
             },
         elevation = 5.dp,
@@ -627,7 +627,7 @@ fun dayCard(modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewMod
 
                     withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color.Gray, fontSize = 15.sp)
                     ) {
-                        append(date.getDayName())
+                        append(date.daysOfWeek.substring(0,3))
                     }
                 }
             )
@@ -638,7 +638,7 @@ fun dayCard(modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewMod
 
 
                         ) {
-                        append(date.getDayNumber())
+                        append(date.daysOfMonth.toString())
                     }
                 },
                 modifier = Modifier.padding(start= 8.dp, end= 8.dp))
@@ -652,14 +652,10 @@ fun dayCard(modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewMod
 }
 @ExperimentalMaterialApi
 @Composable
-fun dayCardScroller(viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel) {
-
-    val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
-        Date("Mon", "3"),
-        Date("Tue", "4"),
-        Date("Wed", "5"),
-        Date("Thu", "6"),
-        Date("Fri", "7"))
+fun dayCardScroller(viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel, month: String) {
+    val findDaysOfGivenMonth: GetDayInfoViewModel = hiltViewModel()
+    findDaysOfGivenMonth.findDaysOfMonth(month)
+    val items = findDaysOfGivenMonth.state.value.days
 
     LazyRow(
         modifier = Modifier
