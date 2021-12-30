@@ -4,8 +4,12 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,13 +28,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.AddCircle
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +59,9 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import com.example.atry.data.remote.dto.FAQItem
+import com.example.atry.data.remote.dto.Login
+import com.example.atry.data.remote.dto.Register
 import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
@@ -63,31 +71,31 @@ import kotlin.collections.ArrayList
 
 
 var selectedDay = mutableStateOf(1)
+var userID = mutableStateOf(-1)
 @Composable
 public fun currentRoute(navController: NavHostController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route
 }
+@OptIn(ExperimentalAnimationApi::class)
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
-
-    val arrayList = ArrayList<Resource>()
-    arrayList.add(Resource("CNC1","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
-    arrayList.add(Resource("CNC2","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
-    arrayList.add(Resource("CNC3","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
-    arrayList.add(Resource("CNC4","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem "))
-
+    val notBar = arrayOf("login_screen","register_screen")
     val navController = rememberNavController()
 
     Scaffold(
-        topBar ={if (currentRoute(navController = navController)!="login_screen") TopBar() },
-        bottomBar = { if (currentRoute(navController = navController)!="login_screen") BottomNavigationBar(navController) }
+        topBar ={if (currentRoute(navController = navController) !in notBar )  TopBar() },
+        bottomBar = { if (currentRoute(navController = navController) !in notBar ) BottomNavigationBar(navController) }
 
     ) {
         NavHost(navController = navController, startDestination = Screen.loginScreen.route) {
             composable(route = Screen.loginScreen.route) {
                 loginScreen(navController = navController)
+            }
+            composable(route = Screen.registerScreen.route) {
+                registerScreen(navController = navController)
             }
             composable(
                 route = Screen.featuresScreen.route + "/{name}",
@@ -156,12 +164,20 @@ fun Navigation(){
 
             }
             composable(
-                route = Screen.tasksScreen.route + "/{resourceID}",
+                route = Screen.tasksScreen.route + "/{resourceID}/{month}",
+                arguments = listOf(
+                    navArgument("month") {
+                        type = NavType.StringType
+                        defaultValue = " "
+                        nullable = true
 
-                ) { entry ->
+                    }
+                )
+            ) { entry ->
                 tasksScreen(
                     navController = navController,
-                    id = entry.arguments?.getString("resourceID")
+                    id = entry.arguments?.getString("resourceID"),
+                    month = entry.arguments?.getString("month")
                 )
 
             }
@@ -175,14 +191,11 @@ fun Navigation(){
                 )
 
             }
-            composable(
-                route = Screen.AnnouncementScreen.route
-            ) { entry ->
-                addAnnouncement(
-                    navController = navController
-
-                )
-
+            composable(route = Screen.contributorScreen.route) {
+                contributorForm(navController = navController)
+            }
+            composable(route = Screen.FAQScreen.route) {
+                FAQScreen(navController = navController)
             }
 
         }
@@ -334,7 +347,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                 val datePickerDialog = DatePickerDialog(
                     context,
                     { _: DatePicker, year:Int, month:Int, dayOfMonth: Int ->
-                        date.value = "$dayOfMonth/$month/$year"
+                        date.value = "$dayOfMonth/${month+1}/$year"
                     }, year, month, day
                 )
 
@@ -407,7 +420,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                         if (resourceID != null) {
                             addTaskViewModel.addResource(resourceID.toInt(), task = task)
                         }
-                        navController.navigate(Screen.tasksScreen.withArgs(resourceID))
+                        navController.navigate(Screen.seasonsScreen.withArgs(resourceID))
                     }) //bayad eslah she be resource id
 //                Spacer(modifier = Modifier.padding(15.dp))
 
@@ -426,7 +439,7 @@ fun taskForm(navController : NavController,resourceID:String?){
 
 @ExperimentalMaterialApi
 @Composable
-fun tasksScreen(navController: NavController,id:String?){
+fun tasksScreen(navController: NavController,id:String?, month:String?){
     val getTaskViewModel:GetTaskViewModel = hiltViewModel()
     if (id != null && !getTaskViewModel.dataLoaded.value) {
         getTaskViewModel.getTask(id.toInt())
@@ -440,18 +453,54 @@ fun tasksScreen(navController: NavController,id:String?){
         .fillMaxWidth()
         .fillMaxWidth()) {
 
-        Text(
-            buildAnnotatedString {
+
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween){
+            Column() {
+                Text(
+                    buildAnnotatedString {
 //                    append("welcome to ")
 
-                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
-                ) {
-                    append("Today${id}")
-                }
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                        ) {
+                            append("Today")
+                        }
 
-            },
-            modifier = Modifier.padding(10.dp)
-        )
+                    },
+                    modifier = Modifier.padding(10.dp)
+                )
+                Text(
+                    buildAnnotatedString {
+//                    append("welcome to ")
+
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
+                            0xFFB0B0B3
+                        ), fontSize = 10.sp)
+                        ) {
+                            append("resource_id :$id ")
+                        }
+
+                    },
+                    modifier = Modifier.padding(start=10.dp,bottom = 5.dp, top=5.dp)
+                )
+            }
+
+            Text(
+                buildAnnotatedString {
+//                    append("welcome to ")
+
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color(0xFF4552B8), fontSize = 20.sp)
+                    ) {
+                        append("$month")
+                    }
+
+                },
+                modifier = Modifier.padding(10.dp)
+            )
+        }
+
+
 
 
         dayCardScroller(viewmodel = getTaskViewModel)
@@ -549,15 +598,22 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 @ExperimentalMaterialApi
 @Composable
-fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel){
-
+fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel){
+//    var dayCardBackground  by rememberSaveable { mutableStateOf(Color(0xFFF3F3F1)) }
+    var colorCondition = if(getDayViewModel.state.value.equals("${date.getDayName()} ${date.getDayNumber()}")) Color(
+        0xFFDED2F5
+    ) else Color(0xFFF3F3F1)
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable { viewmodel.deleteTasks() },
+            .clickable {
+                viewmodel.deleteTasks()
+                getDayViewModel.setDay(date.getDayName(), date.getDayNumber())
+
+            },
         elevation = 5.dp,
         shape = RoundedCornerShape(10.dp),
-        backgroundColor = Color(0xFFF3F3F1)
+        backgroundColor = colorCondition
 
     ) {
         Column(Modifier.padding(10.dp)) {
@@ -592,6 +648,7 @@ fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewM
 @ExperimentalMaterialApi
 @Composable
 fun dayCardScroller(viewmodel: GetTaskViewModel) {
+    val getDayViewModel: GetDayViewModel = hiltViewModel()
     val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
         Date("Mon", "3"),
         Date("Tue", "4"),
@@ -606,7 +663,7 @@ fun dayCardScroller(viewmodel: GetTaskViewModel) {
 
         ) {
         itemsIndexed(items) { index, item ->
-            dayCard( modifier= Modifier,item, viewmodel)
+            dayCard( modifier= Modifier,item, viewmodel, getDayViewModel)
         }
 
     }
@@ -879,7 +936,7 @@ fun resourceCard( navController: NavController,id:Int,resourceName:String,descri
 
 @Composable
 fun loginScreen(navController: NavController){
-
+    val loginViewModel:LoginViewModel = hiltViewModel()
     var usernameState by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf("") }
     Box(modifier = Modifier
@@ -935,7 +992,10 @@ fun loginScreen(navController: NavController){
                     Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
                         0xFF6C5DBD
                     )
-                    ),onClick = { navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
+                    ),onClick = {
+                        val loginData:Login = Login(usernameState,passwordState)
+                        loginViewModel.login(loginData = loginData)
+                        navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
                         Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Login")
 
                     }
@@ -945,7 +1005,19 @@ fun loginScreen(navController: NavController){
 
             }
 
-
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(
+                buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                        0xFFF8F7F7
+                    ), fontSize = 12.sp)
+                    ) {
+                        append("Register")
+                    }
+                },
+                modifier = Modifier.clickable { navController.navigate(Screen.registerScreen.route) }
+            )
 
         }
 
@@ -1001,9 +1073,9 @@ fun featuresScreen (name:String?, navController: NavController){
 
         activityCircleScroller()
         Spacer(modifier = Modifier.padding(20.dp))
-        contributorScroller()
+        contributorScroller(navController = navController)
         Spacer(modifier = Modifier.padding(20.dp))
-        announcementScroller(navController)
+        announcementScroller()
         Spacer(modifier = Modifier.padding(20.dp))
         statisticsChips()
 
@@ -1089,7 +1161,7 @@ fun announcement( modifier: Modifier = Modifier, name:String){
 }
 
 @Composable
-fun announcementScroller(navController : NavController) {
+fun announcementScroller() {
     val items = listOf("changing plan","repairing CNC","session decisi","calculate fund",
         "changing plan","repairing CNC","session decisi","calculate fund",
         "changing plan","repairing CNC","session decisi","calculate fund",
@@ -1118,7 +1190,6 @@ fun announcementScroller(navController : NavController) {
 
         Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),
             modifier = Modifier.size(40.dp)
-                .clickable { navController.navigate(Screen.AnnouncementScreen.route) }
 
         )
 
@@ -1133,18 +1204,10 @@ fun announcementScroller(navController : NavController) {
             Row( modifier=Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 announcement( modifier= Modifier,item)
-                var checked by remember {
-                    mutableStateOf(false)
-                }
+                Icon(Icons.Filled.Star,"",tint = Color(0xFFC8C8CA),
+                    modifier = Modifier.size(30.dp)
 
-                IconToggleButton(
-                    checked = checked, onCheckedChange = { checked = it }
-                ) {
-                    val tint by animateColorAsState(if (checked) Color(0xFFFFC107) else Color(0xFFB0BEC5))
-                    Icon(Icons.Filled.Star, contentDescription = "Localized description", tint = tint,
-                        modifier = Modifier.size(30.dp))
-                }
-
+                )
             }
 
 
@@ -1156,7 +1219,7 @@ fun announcementScroller(navController : NavController) {
 
 
 @Composable
-fun contributorScroller() {
+fun contributorScroller(navController: NavController) {
     val items = listOf("Mina","Erfan","Kiana")
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -1180,7 +1243,9 @@ fun contributorScroller() {
 
 
         Icon(Icons.Filled.Edit,"",tint = Color(0xFF4552B8),
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier
+                .size(40.dp)
+                .clickable { navController.navigate(Screen.contributorScreen.route) }
 
         )
 
@@ -1434,7 +1499,6 @@ fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         NavigationItem.Home,
         NavigationItem.Resources,
-        NavigationItem.Setting,
         NavigationItem.Account,
         NavigationItem.FAQ
     )
@@ -1462,6 +1526,9 @@ fun BottomNavigationBar(navController: NavController) {
                     }
                     if(item.route ==NavigationItem.Account.route ){
                         navController.navigate(Screen.accountFormScreen.withArgs("mm"))
+                    }
+                    if(item.route ==NavigationItem.FAQ.route ){
+                        navController.navigate(Screen.FAQScreen.route)
                     }
 //                    navController.navigate(item.route) {
 //
@@ -1534,7 +1601,7 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
                                     .clickable {
                                         navController.navigate(
                                             Screen.tasksScreen.withArgs(
-                                                id.toString()
+                                                id.toString(), "  " + d.get(index)
                                             )
                                         )
                                     }
@@ -1553,17 +1620,150 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
 
     }
 }
-@Composable
-fun addAnnouncement(navController: NavController) {
 
-    var announcementNameState by rememberSaveable{mutableStateOf("")}
-    val shape = RoundedCornerShape( 50.dp)
-    val shape2 = CircleShape
-    Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
+
+@Composable
+fun registerScreen(navController: NavController){
+    val registerViewModel:RegisterViewModel = hiltViewModel()
+    var firstnameState by rememberSaveable { mutableStateOf("") }
+    var lastnameState by rememberSaveable { mutableStateOf("") }
+    var EmailState by rememberSaveable { mutableStateOf("") }
+    var passwordState by rememberSaveable { mutableStateOf("") }
+    var selectedType by rememberSaveable { mutableStateOf("") }
+
+    Box(modifier = Modifier
+        .background(Color(0xFF6C5DBD))
+        .fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+
+            Box(modifier = Modifier
+                .background(Color.White, RoundedCornerShape(40.dp))
+                .fillMaxHeight(0.8f)
+                .fillMaxWidth(0.8f)
+                .clip(
+                    RoundedCornerShape(40.dp)
+                )) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(painterResource(R.drawable.logop75),"logo")
+                    TextField(
+                        value = firstnameState,
+                        onValueChange = { firstnameState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Name")
+                        }
+                    )
+//        textInput(textFieldName = "Username",true)
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextField(
+                        value = lastnameState,
+                        onValueChange = { lastnameState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Lastname")
+                        }
+                    )
+//        textInput(textFieldName = "Username",true)
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextField(
+                        value = EmailState,
+                        onValueChange = { EmailState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Email")
+                        }
+                    )
+//        textInput(textFieldName = "Username",true)
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextField(
+                        value = passwordState,
+                        onValueChange = { passwordState = it },
+                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+                        label = { Text("Password") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Column(
+
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Spacer(modifier = Modifier.size(5.dp))
+                        Row {
+                            RadioButton(selected = selectedType == "company", onClick = {
+                                selectedType = "company"
+                            })
+                            Spacer(modifier = Modifier.size(5.dp))
+                            Text("Company")
+                            Spacer(modifier = Modifier.size(16.dp))
+                            RadioButton(selected = selectedType == "contributor", onClick = {
+                                selectedType = "contributor"
+                            })
+                            Spacer(modifier = Modifier.size(5.dp))
+                            Text("Contributor")
+                        }
+                    }
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
+                        0xFF6C5DBD
+                    )
+                    ),onClick = {
+                        val registerData = Register(firstnameState,lastnameState,EmailState,passwordState,selectedType)
+                        registerViewModel.register(registerData)
+                        navController.navigate(Screen.featuresScreen.withArgs(firstnameState))}) {
+                        Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Register")
+
+                    }
+//                    Spacer(modifier = Modifier.padding(1.dp))
+
+                }
+
+            }
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(
+                buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                        0xFFF8F7F7
+                    ), fontSize = 12.sp)
+                    ) {
+                        append("Login")
+                    }
+                },
+                modifier = Modifier.clickable {
+
+                    navController.navigate(Screen.loginScreen.route) }
+            )
+        }
+
+
+
+
+
+    }
+
+
+}
+
+
+@Composable
+fun contributorForm(navController: NavController) {
+
+    val shape = RoundedCornerShape(topStart = 80.dp)
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier
+
             .fillMaxWidth()
-            .fillMaxHeight(0.3f)
-            .background(Color(0xFF4552B8))
+            .fillMaxHeight()
+            .background(Color.White)
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -1577,57 +1777,152 @@ fun addAnnouncement(navController: NavController) {
                                 fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
                             )
                         ) {
-                            append("Add Announcement")
+                            append("Add contributor")
                         }
                     }
                 )
-            }
-        }
-        Box(modifier = Modifier
-            .clip(shape)
-            .border(BorderStroke(15.dp, color = Color(0xFFBB95E6)))
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f)
-            .background(Color.White)
-        ){
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-
+                Spacer(modifier = Modifier.padding(5.dp))
+                textInput(textFieldName = "User Email Address", true)
+                Spacer(modifier = Modifier.padding(15.dp))
+                Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
+                    0xFF6C5DBD
                 )
-                OutlinedTextField(
-                    value = announcementNameState,
-                    onValueChange = {
-                        announcementNameState = it
-                    },
-                    label = { Text("Announcement") },
-                    singleLine = true
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
+                ),onClick = {
+                    navController.navigate(Screen.featuresScreen.withArgs("ss"))
+                }) {
+                    Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Grant Access")
 
-                Icon(Icons.Outlined.AddCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(70.dp)
-                    .clickable {
+                }
 
-                    })
 
             }
 
         }
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color(0xFF4552B8))
-        )
 
 
 
     }
+
 }
+@ExperimentalAnimationApi
+@ExperimentalMaterialApi
+@Composable
+fun MyExpandedList(title:String ,content:String ) {
+    var expanded by remember { mutableStateOf(false) }
+
+    val rotateState = animateFloatAsState(
+        targetValue = if (expanded) 180F else 0F,
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+
+        Card(onClick = { expanded = !expanded }, backgroundColor =  Color.White) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color(0xFF4552B8),
+                            fontSize = 20.sp
+                        )
+                    ) {
+                        append("$title")
+                    }
+                }, modifier=Modifier.fillMaxWidth(0.9F))
+
+                Icon(
+                    Icons.Default.ArrowDropDown, "",
+                    modifier = Modifier.rotate(rotateState.value)
+                )
+            }
+        }
+        Divider()
+        AnimatedVisibility(
+            visible = expanded,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF673AB7))
+                    .padding(16.dp)
+            ) {
+                Text(buildAnnotatedString {
+//                    append("welcome to ")
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFFFFFFFF),
+                            fontSize = 15.sp
+                        )
+                    ) {
+                        append("$content")
+                    }
+                }, modifier=Modifier.fillMaxWidth(0.9F))
+            }
+        }
+    }
+}
+@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterialApi::class)
+@ExperimentalAnimationApi
+@Composable
+
+fun FAQScreen(navController: NavController){
+
+
+    val items = listOf<FAQItem>(
+        FAQItem("راندمان چیست؟", "اپلیکیشن بستری را برای کارفرما فراهم می کند تا بتواند منابع خود را مدیریت کند.برای مثال با افزودن هر منبع و تسک های مربوط به آن منبع و تعیین اهمیت آن تسک و تسک های پیش نیاز(در صورت وجود) از جدول زمانی کار آن منبع که توسط اپلیکیشن ساخته می شود،مطلع می شوند و زمان خالی آن منبع را پیدا کرده و با تسک دیگری پر می کنند در نتیجه راندمان منبع را افزایش می دهند."),
+        FAQItem("چرا از راندمان استفاده کنم؟", "امروزه در صنعت کارفرمایان متعددی به دنبال مدیریت منابع خود هستند تا بتوانند راندمان منابع خود را افزایش دهند. در این حیطه نرم افزار هایی مانند Microsoft project وجود دارند اما به علت پیچیدگی کار با این نرم افزارها و نبود اپلیکیشن های مناسب با کاربری آسان و کمبود افراد متخصص در این نرم افزارها، در صنعت ایران به صورت عمده استفاده نمی شوند. اغلب کارفرمایان تنها به دنبال مدیریت منابع خود و تسک های همان منبع می باشند و نیازی به سایر امکانات نرم افزار های پیچیده ندارند. "),
+        FAQItem("تفاوت راندمان با برنامه های مشابه چیست؟", "مدیریت آسان منابع یک کارفرما بدون نیاز به فرد متخصص یا یادگیری نرم افزار های پیچیده و از میان برداشتن برنامه ریزی های نوشتاری.در این حیطه نرم افزار هایی مانند Microsoft project وجود دارند اما به علت پیچیدگی کار با این نرم افزارها و نبود اپلیکیشن های مناسب با کاربری آسان و کمبود افراد متخصص در این نرم افزارها، در صنعت ایران به صورت عمده استفاده نمی شوند. اغلب کارفرمایان تنها به دنبال مدیریت منابع خود و تسک های همان منبع می باشند و نیازی به سایر امکانات نرم افزار های پیچیده ندارند."),
+        FAQItem("هدف و کارابی نهایی راندمان چیست؟", "ایجاد یک بستر مناسب برای کارفرمایان در صنعت به گونه ای که بدون آموزش خاص و استخدام نیروی متخصص به سادگی منابع خود را مدیریت کنند و راندمان منابع را از طریق یافتن و پر کردن زمان های خالی آن منبع افزایش دهند."),
+    )
+
+    Column(modifier = Modifier.fillMaxSize()){
+        Text(buildAnnotatedString {
+//                    append("welcome to ")
+            withStyle(
+                style = SpanStyle(
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFF4552B8),
+                    fontSize = 40.sp
+                )
+            ) {
+                append("FAQ")
+            }
+        }, textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(4.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
+        LazyColumn(modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 40.dp), horizontalAlignment = Alignment.CenterHorizontally){
+
+            itemsIndexed(
+                items
+            ){index, item ->
+                MyExpandedList(title = item.getTitle(), content = item.getContent())
+
+            }
+        }
+
+    }
+
+
+
+}
+
+
+
+
 
 
