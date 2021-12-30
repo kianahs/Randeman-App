@@ -3,7 +3,6 @@ package com.example.atry
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -26,13 +25,11 @@ import androidx.compose.material.icons.outlined.CheckCircle
 
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
@@ -50,12 +47,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -63,11 +58,10 @@ import com.example.atry.data.remote.dto.FAQItem
 import com.example.atry.data.remote.dto.Login
 import com.example.atry.data.remote.dto.Register
 import com.example.atry.data.remote.dto.Task
+import com.example.atry.viewModels.*
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 var selectedDay = mutableStateOf(1)
@@ -259,7 +253,7 @@ fun taskForm(navController : NavController,resourceID:String?){
     var durationState by rememberSaveable{mutableStateOf("")}
     var deadlineState by rememberSaveable {mutableStateOf("")}
     var priorityState by rememberSaveable{mutableStateOf("0")}
-    val addTaskViewModel:AddTaskViewModel= hiltViewModel()
+    val addTaskViewModel: AddTaskViewModel = hiltViewModel()
     deadlineState = "3434"
     val context = LocalContext.current
     val shape = RoundedCornerShape(topStart = 80.dp)
@@ -442,7 +436,7 @@ fun taskForm(navController : NavController,resourceID:String?){
 @ExperimentalMaterialApi
 @Composable
 fun tasksScreen(navController: NavController,id:String?, month:String?){
-    val getTaskViewModel:GetTaskViewModel = hiltViewModel()
+    val getTaskViewModel: GetTaskViewModel = hiltViewModel()
     if (id != null && !getTaskViewModel.dataLoaded.value) {
         getTaskViewModel.getTask(id.toInt())
     }
@@ -602,7 +596,7 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
 
 @ExperimentalMaterialApi
 @Composable
-fun dayCard(  modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel){
+fun dayCard(modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel){
 //    var dayCardBackground  by rememberSaveable { mutableStateOf(Color(0xFFF3F3F1)) }
     var colorCondition = if(getDayViewModel.state.value.equals("${date.getDayName()} ${date.getDayNumber()}")) Color(
         0xFFDED2F5
@@ -852,7 +846,7 @@ fun accountForm(featureChoice: String?) {
 @ExperimentalMaterialApi
 @Composable
 fun  resourcesScreen( navController: NavController,featureChoice:String?){
-    val viewModel:ResourcesViewModel = hiltViewModel()
+    val viewModel: ResourcesViewModel = hiltViewModel()
 
     val service = PostsService.create()
     val posts = produceState<List<PostResponse>>(
@@ -940,7 +934,7 @@ fun resourceCard( navController: NavController,id:Int,resourceName:String,descri
 
 @Composable
 fun loginScreen(navController: NavController){
-    val loginViewModel:LoginViewModel = hiltViewModel()
+    val loginViewModel: LoginViewModel = hiltViewModel()
     var usernameState by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf("") }
     Box(modifier = Modifier
@@ -1628,7 +1622,7 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
 
 @Composable
 fun registerScreen(navController: NavController){
-    val registerViewModel:RegisterViewModel = hiltViewModel()
+    val registerViewModel: RegisterViewModel = hiltViewModel()
     var firstnameState by rememberSaveable { mutableStateOf("") }
     var lastnameState by rememberSaveable { mutableStateOf("") }
     var EmailState by rememberSaveable { mutableStateOf("") }
@@ -1877,6 +1871,7 @@ fun MyExpandedList(title:String ,content:String ) {
         }
     }
 }
+
 @ExperimentalMaterialApi
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalAnimationApi

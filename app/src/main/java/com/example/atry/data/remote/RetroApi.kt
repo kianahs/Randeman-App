@@ -1,15 +1,12 @@
 package com.example.atry.data.remote
 
-import com.example.atry.data.remote.dto.Resource
-import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import retrofit2.Response
 import retrofit2.http.*
 import retrofit2.http.GET
 
 import android.R.string.no
-import com.example.atry.data.remote.dto.Login
-import com.example.atry.data.remote.dto.Register
+import com.example.atry.data.remote.dto.*
 import retrofit2.Call
 
 
@@ -31,6 +28,9 @@ interface RetroApi {
 
     @POST ("/register")
     suspend fun register(@Body registerData: Register):Response<PostResponse>
+
+    @GET ("/getDaysOfMonth")
+    suspend fun getDayOfMonth(@Query("month") month:String):List<DayInfo>
 
 
     companion object{
