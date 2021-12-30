@@ -52,6 +52,7 @@ fun tasksScreen(navController: NavController, id:String?, month:String?){
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween){
             Column() {
+
                 Text(
                     buildAnnotatedString {
 //                    append("welcome to ")
@@ -98,7 +99,7 @@ fun tasksScreen(navController: NavController, id:String?, month:String?){
 
 
         if (month != null) {
-            dayCardScroller(viewmodel = getTaskViewModel, getDayViewModel = getDayViewModel, month)
+            dayCardScroller(viewmodel = getTaskViewModel, getDayViewModel = getDayViewModel, month, id)
         }
 
     }

@@ -22,7 +22,7 @@ import com.example.atry.viewModels.GetTaskViewModel
 
 @ExperimentalMaterialApi
 @Composable
-fun dayCard(modifier: Modifier = Modifier, date: DayInfo, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel){
+fun dayCard(modifier: Modifier = Modifier, date: DayInfo, viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel,month:Int,resourceID:Int){
 //    var dayCardBackground  by rememberSaveable { mutableStateOf(Color(0xFFF3F3F1)) }
     var colorCondition = if(getDayViewModel.state.value.equals("${date.daysOfWeek.substring(0,3)} ${date.daysOfMonth.toString()}")) Color(
         0xFFDED2F5
@@ -33,6 +33,8 @@ fun dayCard(modifier: Modifier = Modifier, date: DayInfo, viewmodel: GetTaskView
             .clickable {
                 viewmodel.deleteTasks()
                 getDayViewModel.setDay(date.daysOfWeek.substring(0,3), date.daysOfMonth.toString() )
+                viewmodel.getTasksOfDay(resourceID,2021,month,date.daysOfMonth.toInt())
+//                viewmodel.getTasksOfDay(1,2021,10,22)
 
             },
         elevation = 5.dp,
@@ -41,6 +43,7 @@ fun dayCard(modifier: Modifier = Modifier, date: DayInfo, viewmodel: GetTaskView
 
     ) {
         Column(Modifier.padding(10.dp)) {
+
             Text(
                 buildAnnotatedString {
 
