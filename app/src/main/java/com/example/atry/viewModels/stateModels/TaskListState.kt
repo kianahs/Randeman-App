@@ -1,4 +1,4 @@
-package com.example.atry
+package com.example.atry.viewModels.stateModels
 
 import com.example.atry.data.remote.dto.Task
 

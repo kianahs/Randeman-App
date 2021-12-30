@@ -1,37 +1,37 @@
-package com.example.atry
+package com.example.atry.viewModels
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.atry.data.remote.RetroApi
+import com.example.atry.data.remote.dto.DateModel
 import com.example.atry.data.remote.dto.Resource
+import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddResourcesViewModel @Inject constructor(
+class GetDayViewModel @Inject constructor(
     private val api:RetroApi
 
 ):ViewModel(){
 
-    private val _state = mutableStateOf(PostResponseState())
-    val state: State<PostResponseState> = _state
+    private val _state = mutableStateOf("")
+    val state: State<String> = _state
 
-    fun addResource(resource:Resource){
+    fun setDay(day:String,dayNum:String){
         viewModelScope.launch {
             try {
-                _state.value = state.value.copy(isLoading = true)
-                _state.value = state.value.copy(
-                    statusCode = api.addResource(resource),
-                    isLoading = false
-                )
+
+                _state.value = "$day $dayNum"
+
 
             }
             catch (e:Exception){
                 Log.e("AddResourceViewModel","addResources:",e)
-                _state.value = state.value.copy(isLoading = false,error="error")
+                _state.value ="error"
 
             }
         }

@@ -1,12 +1,11 @@
-package com.example.atry
+package com.example.atry.viewModels
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.atry.viewModels.stateModels.TaskListState
 import com.example.atry.data.remote.RetroApi
-import com.example.atry.data.remote.dto.Resource
-import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

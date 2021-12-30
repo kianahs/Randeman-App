@@ -7,5 +7,7 @@ data class Task(
     val priority: Int,
     val deadline: String,
     val unique_id: Int,
-    val resourceName:String
+    val resourceName:String,
+    val endedAt:String,
+    val startedAt:String
 )

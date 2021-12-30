@@ -1,13 +1,12 @@
-package com.example.atry
+package com.example.atry.viewModels
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.atry.viewModels.stateModels.PostResponseState
 import com.example.atry.data.remote.RetroApi
-import com.example.atry.data.remote.dto.Login
 import com.example.atry.data.remote.dto.Register
-import com.example.atry.data.remote.dto.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
