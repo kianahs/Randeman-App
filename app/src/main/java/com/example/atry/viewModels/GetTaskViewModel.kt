@@ -48,6 +48,31 @@ class GetTaskViewModel @Inject constructor(
 
 
     }
+    fun getTasksOfDay(id:Int,year:Int,month:Int,day:Int){
+        viewModelScope.launch {
+            loading.value = true
+            try {
+                _state.value = state.value.copy(isLoading = true)
+                delay(2000)
+                _state.value = state.value.copy(
+                    tasks = api.getTasksOfDay(id,year,month,day),
+                    isLoading = false
+                )
+                dataLoaded.value = true
+
+                loading.value = false
+            }
+            catch (e:Exception){
+                Log.e("GetTaskViewModel","getTasksOfDay:",e)
+                _state.value = state.value.copy(isLoading = false,error="error")
+                dataLoaded.value = false
+                loading.value = true
+
+            }
+        }
+
+
+    }
 
 
     fun deleteTasks(){

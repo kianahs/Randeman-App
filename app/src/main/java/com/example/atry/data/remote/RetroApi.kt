@@ -20,6 +20,9 @@ interface RetroApi {
     @GET("/getTasksByduration/{id}")
     suspend fun getTask(@Path("id") id:Int?):List<Task>
 
+    @GET("/getTaskByDate/{id}")
+    suspend fun getTasksOfDay(@Path("id") id:Int?,@Query("year") year:Int,@Query("month") month:Int,@Query("day") day:Int):List<Task>
+
     @POST("/addTask/{id}")
     suspend fun addTask(@Path("id") id: Int?,@Body task:Task):Response<PostResponse>
 
