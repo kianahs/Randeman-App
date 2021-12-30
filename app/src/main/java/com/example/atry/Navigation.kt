@@ -61,7 +61,12 @@ import com.example.atry.data.remote.dto.Task
 import com.example.atry.viewModels.*
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import java.util.*
+import java.util.logging.Handler
 
 
 var selectedDay = mutableStateOf(1)
@@ -941,6 +946,12 @@ fun loginScreen(navController: NavController){
     val loginViewModel: LoginViewModel = hiltViewModel()
     var usernameState by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf("") }
+    LaunchedEffect(loginViewModel.state.value.statusCode){
+        snapshotFlow{loginViewModel.state.value.statusCode?.isSuccessful}.distinctUntilChanged()
+            .filter { it == true }
+            .collect { navController.navigate(Screen.featuresScreen.withArgs(usernameState)) }
+
+    }
     Box(modifier = Modifier
         .background(Color(0xFF6C5DBD))
         .fillMaxSize()) {
@@ -990,14 +1001,31 @@ fun loginScreen(navController: NavController){
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                     )
+                    if(loginViewModel.state.value.statusCode?.isSuccessful == false){
+                        Text(
+                        buildAnnotatedString {
+//                    append("welcome to ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                                0xFFFF0000
+                            ), fontSize = 12.sp)
+                            ) {
+                                append("email or password is Wrong")
+                            }
+                        }
+                    )
+
+                    }
+
                     Spacer(modifier = Modifier.padding(15.dp))
                     Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
                         0xFF6C5DBD
                     )
                     ),onClick = {
+
                         val loginData:Login = Login(usernameState,passwordState)
                         loginViewModel.login(loginData = loginData)
-                        navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
+
+                            }) {
                         Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Login")
 
                     }
@@ -1904,7 +1932,9 @@ fun FAQScreen(navController: NavController){
                 append("FAQ")
             }
         }, textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(4.dp))
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp))
         Spacer(modifier = Modifier.padding(10.dp))
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
