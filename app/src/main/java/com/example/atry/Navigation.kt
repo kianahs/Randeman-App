@@ -183,6 +183,9 @@ fun Navigation(){
                 )
 
             }
+            composable(route = Screen.contributorScreen.route) {
+                contributorForm(navController = navController)
+            }
 
         }
     }
@@ -1058,7 +1061,7 @@ fun featuresScreen (name:String?, navController: NavController){
 
         activityCircleScroller()
         Spacer(modifier = Modifier.padding(20.dp))
-        contributorScroller()
+        contributorScroller(navController = navController)
         Spacer(modifier = Modifier.padding(20.dp))
         announcementScroller()
         Spacer(modifier = Modifier.padding(20.dp))
@@ -1204,7 +1207,7 @@ fun announcementScroller() {
 
 
 @Composable
-fun contributorScroller() {
+fun contributorScroller(navController: NavController) {
     val items = listOf("Mina","Erfan","Kiana")
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -1228,7 +1231,7 @@ fun contributorScroller() {
 
 
         Icon(Icons.Filled.Edit,"",tint = Color(0xFF4552B8),
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(40.dp).clickable { navController.navigate(Screen.contributorScreen.route) }
 
         )
 
@@ -1732,6 +1735,60 @@ fun registerScreen(navController: NavController){
 
 
 }
+
+
+@Composable
+fun contributorForm(navController: NavController) {
+
+    val shape = RoundedCornerShape(topStart = 80.dp)
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier
+
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.White)
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
+                            )
+                        ) {
+                            append("Add contributor")
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.padding(5.dp))
+                textInput(textFieldName = "User Email Address", true)
+                Spacer(modifier = Modifier.padding(15.dp))
+                Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
+                    0xFF6C5DBD
+                )
+                ),onClick = {
+                    navController.navigate(Screen.featuresScreen.withArgs("ss"))
+                }) {
+                    Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Grant Access")
+
+                }
+
+
+            }
+
+        }
+
+
+
+    }
+
+}
+
 
 
 

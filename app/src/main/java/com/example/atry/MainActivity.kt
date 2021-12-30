@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +59,7 @@ import androidx.navigation.compose.rememberNavController
 import java.sql.*
 import java.util.*
 import com.example.atry.*
+import com.example.atry.data.remote.dto.Login
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -116,7 +119,6 @@ class MainActivity : ComponentActivity() {
 //
 //}
 
-
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
@@ -130,6 +132,7 @@ fun DefaultPreview() {
 //    registerScreen(rememberNavController())
 //    RadioButton()
 //    loginScreen(navController = rememberNavController())
+//    ContributorForm()
 }
 
 
