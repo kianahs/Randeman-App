@@ -4,9 +4,8 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AddCircle
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -54,8 +54,6 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
-import com.example.atry.data.remote.dto.Login
-import com.example.atry.data.remote.dto.Register
 import com.example.atry.data.remote.dto.Task
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 import com.plcoding.ktorclientandroid.data.remote.dto.PostResponse
@@ -65,7 +63,6 @@ import kotlin.collections.ArrayList
 
 
 var selectedDay = mutableStateOf(1)
-var userID = mutableStateOf(-1)
 @Composable
 public fun currentRoute(navController: NavHostController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -74,20 +71,23 @@ public fun currentRoute(navController: NavHostController): String? {
 @ExperimentalMaterialApi
 @Composable
 fun Navigation(){
-    val notBar = arrayOf("login_screen","register_screen")
+
+    val arrayList = ArrayList<Resource>()
+    arrayList.add(Resource("CNC1","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
+    arrayList.add(Resource("CNC2","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
+    arrayList.add(Resource("CNC3","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"))
+    arrayList.add(Resource("CNC4","lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem "))
+
     val navController = rememberNavController()
 
     Scaffold(
-        topBar ={if (currentRoute(navController = navController) !in notBar )  TopBar() },
-        bottomBar = { if (currentRoute(navController = navController) !in notBar ) BottomNavigationBar(navController) }
+        topBar ={if (currentRoute(navController = navController)!="login_screen") TopBar() },
+        bottomBar = { if (currentRoute(navController = navController)!="login_screen") BottomNavigationBar(navController) }
 
     ) {
         NavHost(navController = navController, startDestination = Screen.loginScreen.route) {
             composable(route = Screen.loginScreen.route) {
                 loginScreen(navController = navController)
-            }
-            composable(route = Screen.registerScreen.route) {
-                registerScreen(navController = navController)
             }
             composable(
                 route = Screen.featuresScreen.route + "/{name}",
@@ -156,20 +156,12 @@ fun Navigation(){
 
             }
             composable(
-                route = Screen.tasksScreen.route + "/{resourceID}/{month}",
-                arguments = listOf(
-                    navArgument("month") {
-                        type = NavType.StringType
-                        defaultValue = " "
-                        nullable = true
+                route = Screen.tasksScreen.route + "/{resourceID}",
 
-                    }
-                )
-            ) { entry ->
+                ) { entry ->
                 tasksScreen(
                     navController = navController,
-                    id = entry.arguments?.getString("resourceID"),
-                    month = entry.arguments?.getString("month")
+                    id = entry.arguments?.getString("resourceID")
                 )
 
             }
@@ -180,6 +172,15 @@ fun Navigation(){
                 taskForm(
                     navController = navController,
                     resourceID = entry.arguments?.getString("resourceID")
+                )
+
+            }
+            composable(
+                route = Screen.AnnouncementScreen.route
+            ) { entry ->
+                addAnnouncement(
+                    navController = navController
+
                 )
 
             }
@@ -427,7 +428,7 @@ fun taskForm(navController : NavController,resourceID:String?){
 
 @ExperimentalMaterialApi
 @Composable
-fun tasksScreen(navController: NavController,id:String?, month:String?){
+fun tasksScreen(navController: NavController,id:String?){
     val getTaskViewModel:GetTaskViewModel = hiltViewModel()
     if (id != null && !getTaskViewModel.dataLoaded.value) {
         getTaskViewModel.getTask(id.toInt())
@@ -441,54 +442,18 @@ fun tasksScreen(navController: NavController,id:String?, month:String?){
         .fillMaxWidth()
         .fillMaxWidth()) {
 
-
-        Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween){
-            Column() {
-                Text(
-                    buildAnnotatedString {
+        Text(
+            buildAnnotatedString {
 //                    append("welcome to ")
 
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
-                        ) {
-                            append("Today")
-                        }
+                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
+                ) {
+                    append("Today${id}")
+                }
 
-                    },
-                    modifier = Modifier.padding(10.dp)
-                )
-                Text(
-                    buildAnnotatedString {
-//                    append("welcome to ")
-
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
-                            0xFFB0B0B3
-                        ), fontSize = 10.sp)
-                        ) {
-                            append("resource_id :$id ")
-                        }
-
-                    },
-                    modifier = Modifier.padding(start=10.dp,bottom = 5.dp, top=5.dp)
-                )
-            }
-
-            Text(
-                buildAnnotatedString {
-//                    append("welcome to ")
-
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color(0xFF4552B8), fontSize = 20.sp)
-                    ) {
-                        append("$month")
-                    }
-
-                },
-                modifier = Modifier.padding(10.dp)
-            )
-        }
-
-
+            },
+            modifier = Modifier.padding(10.dp)
+        )
 
 
         dayCardScroller(viewmodel = getTaskViewModel)
@@ -918,7 +883,7 @@ fun resourceCard( navController: NavController,id:Int,resourceName:String,descri
 
 @Composable
 fun loginScreen(navController: NavController){
-    val loginViewModel:LoginViewModel = hiltViewModel()
+
     var usernameState by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf("") }
     Box(modifier = Modifier
@@ -974,10 +939,7 @@ fun loginScreen(navController: NavController){
                     Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
                         0xFF6C5DBD
                     )
-                    ),onClick = {
-                        val loginData:Login = Login(usernameState,passwordState)
-                        loginViewModel.login(loginData = loginData)
-                        navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
+                    ),onClick = { navController.navigate(Screen.featuresScreen.withArgs(usernameState))}) {
                         Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Login")
 
                     }
@@ -987,19 +949,7 @@ fun loginScreen(navController: NavController){
 
             }
 
-            Spacer(modifier = Modifier.padding(10.dp))
-            Text(
-                buildAnnotatedString {
-//                    append("welcome to ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
-                        0xFFF8F7F7
-                    ), fontSize = 12.sp)
-                    ) {
-                        append("Register")
-                    }
-                },
-                modifier = Modifier.clickable { navController.navigate(Screen.registerScreen.route) }
-            )
+
 
         }
 
@@ -1057,7 +1007,7 @@ fun featuresScreen (name:String?, navController: NavController){
         Spacer(modifier = Modifier.padding(20.dp))
         contributorScroller()
         Spacer(modifier = Modifier.padding(20.dp))
-        announcementScroller()
+        announcementScroller(navController)
         Spacer(modifier = Modifier.padding(20.dp))
         statisticsChips()
 
@@ -1143,7 +1093,7 @@ fun announcement( modifier: Modifier = Modifier, name:String){
 }
 
 @Composable
-fun announcementScroller() {
+fun announcementScroller(navController : NavController) {
     val items = listOf("changing plan","repairing CNC","session decisi","calculate fund",
         "changing plan","repairing CNC","session decisi","calculate fund",
         "changing plan","repairing CNC","session decisi","calculate fund",
@@ -1172,6 +1122,7 @@ fun announcementScroller() {
 
         Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),
             modifier = Modifier.size(40.dp)
+                .clickable { navController.navigate(Screen.AnnouncementScreen.route) }
 
         )
 
@@ -1186,10 +1137,18 @@ fun announcementScroller() {
             Row( modifier=Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 announcement( modifier= Modifier,item)
-                Icon(Icons.Filled.Star,"",tint = Color(0xFFC8C8CA),
-                    modifier = Modifier.size(30.dp)
+                var checked by remember {
+                    mutableStateOf(false)
+                }
 
-                )
+                IconToggleButton(
+                    checked = checked, onCheckedChange = { checked = it }
+                ) {
+                    val tint by animateColorAsState(if (checked) Color(0xFFFFC107) else Color(0xFFB0BEC5))
+                    Icon(Icons.Filled.Star, contentDescription = "Localized description", tint = tint,
+                        modifier = Modifier.size(30.dp))
+                }
+
             }
 
 
@@ -1579,7 +1538,7 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
                                     .clickable {
                                         navController.navigate(
                                             Screen.tasksScreen.withArgs(
-                                                id.toString(), "  " + d.get(index)
+                                                id.toString()
                                             )
                                         )
                                     }
@@ -1598,140 +1557,81 @@ fun seasons(navController: NavController,name :String, d : List<String>, col : L
 
     }
 }
-
-
 @Composable
-fun registerScreen(navController: NavController){
-    val registerViewModel:RegisterViewModel = hiltViewModel()
-    var firstnameState by rememberSaveable { mutableStateOf("") }
-    var lastnameState by rememberSaveable { mutableStateOf("") }
-    var EmailState by rememberSaveable { mutableStateOf("") }
-    var passwordState by rememberSaveable { mutableStateOf("") }
-    var selectedType by rememberSaveable { mutableStateOf("") }
+fun addAnnouncement(navController: NavController) {
 
-    Box(modifier = Modifier
-        .background(Color(0xFF6C5DBD))
-        .fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-
-            Box(modifier = Modifier
-                .background(Color.White, RoundedCornerShape(40.dp))
-                .fillMaxHeight(0.8f)
-                .fillMaxWidth(0.8f)
-                .clip(
-                    RoundedCornerShape(40.dp)
-                )) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(painterResource(R.drawable.logop75),"logo")
-                    TextField(
-                        value = firstnameState,
-                        onValueChange = { firstnameState = it },
-                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
-                        label = { Text("Name")
-                        }
-                    )
-//        textInput(textFieldName = "Username",true)
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    TextField(
-                        value = lastnameState,
-                        onValueChange = { lastnameState = it },
-                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
-                        label = { Text("Lastname")
-                        }
-                    )
-//        textInput(textFieldName = "Username",true)
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    TextField(
-                        value = EmailState,
-                        onValueChange = { EmailState = it },
-                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
-                        label = { Text("Email")
-                        }
-                    )
-//        textInput(textFieldName = "Username",true)
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    TextField(
-                        value = passwordState,
-                        onValueChange = { passwordState = it },
-                        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
-                        label = { Text("Password") },
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                    )
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Column(
-
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Spacer(modifier = Modifier.size(5.dp))
-                        Row {
-                            RadioButton(selected = selectedType == "company", onClick = {
-                                selectedType = "company"
-                            })
-                            Spacer(modifier = Modifier.size(5.dp))
-                            Text("Company")
-                            Spacer(modifier = Modifier.size(16.dp))
-                            RadioButton(selected = selectedType == "contributor", onClick = {
-                                selectedType = "contributor"
-                            })
-                            Spacer(modifier = Modifier.size(5.dp))
-                            Text("Contributor")
+    var announcementNameState by rememberSaveable{mutableStateOf("")}
+    val shape = RoundedCornerShape( 50.dp)
+    val shape2 = CircleShape
+    Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.3f)
+            .background(Color(0xFF4552B8))
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
+                            )
+                        ) {
+                            append("Add Announcement")
                         }
                     }
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
-                        0xFF6C5DBD
-                    )
-                    ),onClick = {
-                        val registerData = Register(firstnameState,lastnameState,EmailState,passwordState,selectedType)
-                        registerViewModel.register(registerData)
-                        navController.navigate(Screen.featuresScreen.withArgs(firstnameState))}) {
-                        Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Register")
+                )
+            }
+        }
+        Box(modifier = Modifier
+            .clip(shape)
+            .border(BorderStroke(15.dp, color = Color(0xFFBB95E6)))
+            .fillMaxWidth()
+            .fillMaxHeight(0.7f)
+            .background(Color.White)
+        ){
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-                    }
-//                    Spacer(modifier = Modifier.padding(1.dp))
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
 
-                }
+                )
+                OutlinedTextField(
+                    value = announcementNameState,
+                    onValueChange = {
+                        announcementNameState = it
+                    },
+                    label = { Text("Announcement") },
+                    singleLine = true
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Icon(Icons.Outlined.AddCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(70.dp)
+                    .clickable {
+
+                    })
 
             }
-            Spacer(modifier = Modifier.padding(10.dp))
-            Text(
-                buildAnnotatedString {
-//                    append("welcome to ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
-                        0xFFF8F7F7
-                    ), fontSize = 12.sp)
-                    ) {
-                        append("Login")
-                    }
-                },
-                modifier = Modifier.clickable {
 
-                    navController.navigate(Screen.loginScreen.route) }
-            )
         }
-
-
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFF4552B8))
+        )
 
 
 
     }
-
-
 }
-
-
-
-
 
 
