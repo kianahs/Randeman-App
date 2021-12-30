@@ -347,7 +347,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                 val datePickerDialog = DatePickerDialog(
                     context,
                     { _: DatePicker, year:Int, month:Int, dayOfMonth: Int ->
-                        date.value = "$dayOfMonth/$month/$year"
+                        date.value = "$dayOfMonth/${month+1}/$year"
                     }, year, month, day
                 )
 
@@ -420,7 +420,7 @@ fun taskForm(navController : NavController,resourceID:String?){
                         if (resourceID != null) {
                             addTaskViewModel.addResource(resourceID.toInt(), task = task)
                         }
-                        navController.navigate(Screen.tasksScreen.withArgs(resourceID))
+                        navController.navigate(Screen.seasonsScreen.withArgs(resourceID))
                     }) //bayad eslah she be resource id
 //                Spacer(modifier = Modifier.padding(15.dp))
 
