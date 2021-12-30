@@ -20,7 +20,7 @@ interface RetroApi {
     @POST("/addResource")
     suspend fun addResource(@Body resource: Resource):Response<PostResponse>
 
-    @GET("/getTask/{id}")
+    @GET("/getTasksByduration/{id}")
     suspend fun getTask(@Path("id") id:Int?):List<Task>
 
     @POST("/addTask/{id}")

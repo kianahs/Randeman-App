@@ -401,6 +401,8 @@ fun taskForm(navController : NavController,resourceID:String?){
                                 priorityState.toInt(),
                                 deadlineState,
                                 -1,
+                                " ",
+                                " ",
                                 " "
                             )
                         if (resourceID != null) {
@@ -569,6 +571,8 @@ fun taskCard(  modifier: Modifier = Modifier, task: Task){
                         append("Resource:"+"\n")
                         append("Priority:"+task.priority.toString()+"\n")
                         append("Duration:"+task.duration.toString()+"\n")
+                        append("started at:"+task.startedAt.toString()+"\n")
+                        append("ended at:"+task.endedAt.toString()+"\n")
                     }
                 })
             }
