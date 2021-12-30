@@ -436,7 +436,11 @@ fun taskForm(navController : NavController,resourceID:String?){
 @ExperimentalMaterialApi
 @Composable
 fun tasksScreen(navController: NavController,id:String?, month:String?){
-    val getTaskViewModel: GetTaskViewModel = hiltViewModel()
+
+    val getTaskViewModel:GetTaskViewModel = hiltViewModel()
+    val getDayViewModel: GetDayViewModel = hiltViewModel()
+
+
     if (id != null && !getTaskViewModel.dataLoaded.value) {
         getTaskViewModel.getTask(id.toInt())
     }
@@ -460,7 +464,7 @@ fun tasksScreen(navController: NavController,id:String?, month:String?){
 
                         withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF4552B8), fontSize = 40.sp)
                         ) {
-                            append("Today")
+                            append(""+getDayViewModel.state.value)
                         }
 
                     },
@@ -499,7 +503,7 @@ fun tasksScreen(navController: NavController,id:String?, month:String?){
 
 
 
-        dayCardScroller(viewmodel = getTaskViewModel)
+        dayCardScroller(viewmodel = getTaskViewModel, getDayViewModel = getDayViewModel)
 
     }
     CircularProgressBar(isDisplayed = getTaskViewModel.state.value.isLoading)
@@ -645,8 +649,8 @@ fun dayCard(modifier: Modifier = Modifier, date: Date, viewmodel: GetTaskViewMod
 }
 @ExperimentalMaterialApi
 @Composable
-fun dayCardScroller(viewmodel: GetTaskViewModel) {
-    val getDayViewModel: GetDayViewModel = hiltViewModel()
+fun dayCardScroller(viewmodel: GetTaskViewModel, getDayViewModel: GetDayViewModel) {
+
     val items = listOf<Date>(Date("Sat", "1"),Date("Sun", "2"),
         Date("Mon", "3"),
         Date("Tue", "4"),
