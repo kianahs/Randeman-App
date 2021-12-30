@@ -6,10 +6,9 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -28,6 +27,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AddCircle
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -196,6 +196,9 @@ fun Navigation(){
             }
             composable(route = Screen.FAQScreen.route) {
                 FAQScreen(navController = navController)
+            }
+            composable(route = Screen.announcementScreen.route) {
+                announcementScreen(navController = navController)
             }
 
         }
@@ -1077,7 +1080,7 @@ fun featuresScreen (name:String?, navController: NavController){
         Spacer(modifier = Modifier.padding(20.dp))
         contributorScroller(navController = navController)
         Spacer(modifier = Modifier.padding(20.dp))
-        announcementScroller()
+        announcementScroller(navController = navController)
         Spacer(modifier = Modifier.padding(20.dp))
         statisticsChips()
 
@@ -1163,7 +1166,7 @@ fun announcement( modifier: Modifier = Modifier, name:String){
 }
 
 @Composable
-fun announcementScroller() {
+fun announcementScroller(navController : NavController) {
     val items = listOf("changing plan","repairing CNC","session decisi","calculate fund",
         "changing plan","repairing CNC","session decisi","calculate fund",
         "changing plan","repairing CNC","session decisi","calculate fund",
@@ -1192,6 +1195,7 @@ fun announcementScroller() {
 
         Icon(Icons.Filled.Add,"",tint = Color(0xFF4552B8),
             modifier = Modifier.size(40.dp)
+                .clickable { navController.navigate(Screen.announcementScreen.route) }
 
         )
 
@@ -1206,10 +1210,18 @@ fun announcementScroller() {
             Row( modifier=Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 announcement( modifier= Modifier,item)
-                Icon(Icons.Filled.Star,"",tint = Color(0xFFC8C8CA),
-                    modifier = Modifier.size(30.dp)
+                var checked by remember {
+                    mutableStateOf(false)
+                }
 
-                )
+                IconToggleButton(
+                    checked = checked, onCheckedChange = { checked = it }
+                ) {
+                    val tint by animateColorAsState(if (checked) Color(0xFFFFC107) else Color(0xFFB0BEC5))
+                    Icon(Icons.Filled.Star, contentDescription = "Localized description", tint = tint,
+                        modifier = Modifier.size(30.dp))
+                }
+
             }
 
 
@@ -1217,6 +1229,7 @@ fun announcementScroller() {
 
     }
 }
+
 
 
 
@@ -1923,7 +1936,84 @@ fun FAQScreen(navController: NavController){
 
 }
 
+@Composable
+fun announcementScreen(navController: NavController) {
 
+    var announcementNameState by rememberSaveable{mutableStateOf("")}
+    val shape = RoundedCornerShape( 50.dp)
+    val shape2 = CircleShape
+    Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.3f)
+            .background(Color(0xFF4552B8))
+
+        ){
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
+                            )
+                        ) {
+                            append("Add Announcement")
+                        }
+                    }
+                )
+            }
+        }
+        Box(modifier = Modifier
+            .clip(shape)
+            .border(BorderStroke(15.dp, color = Color(0xFFFFFFFF)))
+            .fillMaxWidth()
+            .fillMaxHeight(0.7f)
+            .background(Color.White)
+        ){
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+
+                )
+                OutlinedTextField(
+                    value = announcementNameState,
+                    onValueChange = {
+                        announcementNameState = it
+                    },
+                    label = { Text("Announcement") },
+                    singleLine = true
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Icon(Icons.Outlined.AddCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(70.dp)
+                    .clickable {
+                        navController.navigate(Screen.featuresScreen.withArgs("ss"))
+
+                    })
+
+            }
+
+        }
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFF4552B8))
+        )
+
+
+
+    }
+}
 
 
 
