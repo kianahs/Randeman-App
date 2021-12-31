@@ -26,6 +26,9 @@ interface RetroApi {
     @POST("/addTask/{id}")
     suspend fun addTask(@Path("id") id: Int?,@Body task:Task):Response<PostResponse>
 
+    @POST("/companyInformation/{id}")
+    suspend fun getCompanyInfo(@Path("id") id: Int?):CompanyInformation
+
     @POST ("/login")
     suspend fun login(@Body loginData: Login):LoginData
 
