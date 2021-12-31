@@ -15,7 +15,7 @@ import com.example.atry.viewModels.GetCompanyInformation
 fun activityCircleScroller() {
 
     val getStatistics : GetCompanyInformation = hiltViewModel()
-    getStatistics.getCompanyInfo(companyID)
+    getStatistics.getCompanyInfo()
 
     val items = listOf(
         getStatistics.state.value.informations?.let { StatisticsStructure("Tasks", it.taskCount) },
