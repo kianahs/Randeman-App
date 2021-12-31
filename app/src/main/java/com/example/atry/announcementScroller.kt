@@ -42,9 +42,7 @@ fun announcementScroller(navController : NavController) {
 
             buildAnnotatedString {
 //                    append("welcome to ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
-                    0xFF4552B8
-                ), fontSize = 25.sp)
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(0xFF5A4CA5), fontSize = 25.sp)
                 ) {
                     append("Announcements")
                 }

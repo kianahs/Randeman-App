@@ -32,11 +32,11 @@ fun accountForm(featureChoice: String?) {
     val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
     val shape = RoundedCornerShape(topStart = 80.dp)
     val shape2 = CircleShape
-    Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.background(Color(0xFF8579C4)),horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.10f)
-            .background(Color(0xFF4552B8))
+            .background(Color(0xFF8579C4))
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -47,7 +47,7 @@ fun accountForm(featureChoice: String?) {
                     buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
+                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFF9F9FC), fontSize = 40.sp
                             )
                         ) {
                             append("Edit Profile")

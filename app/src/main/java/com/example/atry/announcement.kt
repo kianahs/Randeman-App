@@ -28,7 +28,7 @@ fun announcement(modifier: Modifier = Modifier, name:String){
             .padding(4.dp),
         elevation = 5.dp,
         shape = RoundedCornerShape(100.dp),
-        backgroundColor = Color(0xFF4552B8)
+        backgroundColor = Color(0xFF6654C5)
 
     ) {
         Row(Modifier.padding(8.dp)) {

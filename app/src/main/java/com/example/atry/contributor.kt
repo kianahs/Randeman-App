@@ -1,5 +1,7 @@
 package com.example.atry
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,13 +30,14 @@ fun contributor(modifier: Modifier = Modifier, name:String){
             .padding(8.dp),
         elevation = 5.dp,
         shape = RoundedCornerShape(10.dp),
-        backgroundColor = Color(0xFFF3F3F1)
+        backgroundColor = Color(0xFFF3F3F1),
+        border = BorderStroke(2.dp,Color.LightGray)
 
     ) {
         Row(Modifier.padding(10.dp)) {
 
             Icon(
-                Icons.Filled.Person,"",tint = Color(0xFF4552B8),
+                Icons.Filled.Person,"",tint = Color(0xFF6C5DBD),
                 modifier = Modifier
                     .fillMaxWidth()
                     .size(100.dp)

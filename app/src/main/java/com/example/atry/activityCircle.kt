@@ -1,6 +1,7 @@
 package com.example.atry
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -30,7 +31,7 @@ fun activityCircle(modifier: Modifier, content:String, caption: String){
                 .size(100.dp)
                 .clip(CircleShape)
                 .background(Color(0xFFF3F3F3))
-                .shadow(elevation = 80.dp),
+                .shadow(elevation = 80.dp).border(2.dp, Color.LightGray, CircleShape),
 
 
 

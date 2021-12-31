@@ -35,7 +35,7 @@ fun contributorScroller(navController: NavController) {
             buildAnnotatedString {
 //                    append("welcome to ")
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
-                    0xFF4552B8
+                    0xFF6C5DBD
                 ), fontSize = 25.sp)
                 ) {
                     append("Contributors")
@@ -46,7 +46,7 @@ fun contributorScroller(navController: NavController) {
 
 
         Icon(
-            Icons.Filled.Edit,"",tint = Color(0xFF4552B8),
+            Icons.Filled.Edit,"",tint = Color(0xFF6C5DBD),
             modifier = Modifier
                 .size(40.dp)
                 .clickable { navController.navigate(Screen.contributorScreen.route) }

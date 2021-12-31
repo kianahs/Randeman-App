@@ -27,7 +27,7 @@ fun BottomNavigationBar(navController: NavController) {
     )
     BottomNavigation(
 
-        backgroundColor = colorResource(id = R.color.purple_500),
+        backgroundColor = colorResource(id = R.color.purple_one),
         contentColor = Color.White
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
