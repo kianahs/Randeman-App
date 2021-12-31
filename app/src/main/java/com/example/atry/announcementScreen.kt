@@ -1,5 +1,7 @@
 package com.example.atry
 
+import android.content.Context
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,20 +9,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -30,8 +28,22 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 
+@ExperimentalMaterialApi
 @Composable
-fun announcementScreen(navController: NavController) {
+fun announcementScreen(navController: NavController,
+//                       context:Context,
+//                       channelId:String,
+//                       notificationId:Int
+) {
+
+    val context = LocalContext.current
+    val channelId = "Randeman"
+    val notificationId = 0
+    val myBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.logop75)
+    val bigText = "this is notification content in randeman app"
+    LaunchedEffect(Unit) {
+        createNotificationChannel(channelId, context)
+    }
 
     var announcementNameState by rememberSaveable{ mutableStateOf("") }
     val shape = RoundedCornerShape( 50.dp)
@@ -87,14 +99,30 @@ fun announcementScreen(navController: NavController) {
                     label = { Text("Announcement") },
                     singleLine = true
                 )
-                Spacer(modifier = Modifier.padding(10.dp))
+                Spacer(modifier = Modifier.padding(15.dp))
 
-                Icon(
-                    Icons.Outlined.AddCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(70.dp)
-                    .clickable {
-                        navController.navigate(Screen.featuresScreen.withArgs("ss"))
+                Button(modifier = Modifier.size(250.dp,50.dp),shape = RoundedCornerShape(50),colors = ButtonDefaults.buttonColors(backgroundColor = Color(
+                    0xFF6C5DBD
+                )
+                ),onClick = {
+                    navController.navigate(Screen.featuresScreen.withArgs("ss"))
+                    simpleNotificationWithTopAction(
+                        context,
+                        channelId,
+                        notificationId,
+                        "New Announcement",
+                        "$announcementNameState\n Tap to open"
+                    )
+                }) {
+                    Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Add Announcement")
+//                    Text(
+//                        text = "simple notification",
+//                        fontSize = 16.sp,
+//                        modifier = Modifier.padding(5.dp)
+//                    )
 
-                    })
+                }
+
 
             }
 

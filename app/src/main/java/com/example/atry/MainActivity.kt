@@ -1,7 +1,12 @@
 package com.example.atry
 
 import android.app.DatePickerDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -55,6 +60,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -75,10 +82,19 @@ import com.example.atry.Date as Date1
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+//            NotificationExpandTheme{
+//                Surface(color = MaterialTheme.colors.background) {
+
+//                 NotificationExpand()
+
+//                }
+
+//            }
 //            showDatePicker(this)
 //            dayCardScroller()
 
@@ -98,6 +114,33 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+//@ExperimentalMaterialApi
+//@Composable
+//fun NotificationExpand() {
+//
+//
+//    Scaffold() {
+//        Button(onClick = {
+//            simpleNotificationWithTopAction(
+//                context,
+//                channelId,
+//                notificationId,
+//                "simple notification , tap action",
+//                "this is a simple notification will open an activity tap action"
+//            )
+//        }) {
+//            Text(
+//                text = "simple notification",
+//                fontSize = 16.sp,
+//                modifier = Modifier.padding(5.dp)
+//            )
+//        }
+//    }
+//
+//}
+
+
 
 //@ExperimentalMaterialApi
 //@Composable
@@ -142,6 +185,7 @@ fun DefaultPreview() {
 //    loginScreen(navController = rememberNavController())
 //    ContributorForm()
 //    MyExpandedList()
+//    activityCircle(modifier = Modifier, content = "10", caption = "Tasks")
 }
 
 

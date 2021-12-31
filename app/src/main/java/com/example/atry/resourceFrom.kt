@@ -91,7 +91,8 @@ fun resourceFrom(navController: NavController) {
                                     "null",
                                     resourceDescriptionState,
                                     resourceNameState,
-                                    -1
+                                    -1,
+                                    companyID
                                 )
                             addViewModel.addResource(resource)
 
