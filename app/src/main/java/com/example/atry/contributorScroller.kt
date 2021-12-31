@@ -21,7 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+
 import com.example.atry.viewModels.GetCompanyInformation
+
+import com.example.atry.ui.theme.light_green
+import com.example.atry.ui.theme.light_purple
+
 
 @Composable
 fun contributorScroller(navController: NavController) {
@@ -42,9 +47,7 @@ fun contributorScroller(navController: NavController) {
 
             buildAnnotatedString {
 //                    append("welcome to ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
-                    0xFF4552B8
-                ), fontSize = 25.sp)
+                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF000000), fontSize = 25.sp)
                 ) {
                     append("Contributors")
                 }
@@ -54,7 +57,7 @@ fun contributorScroller(navController: NavController) {
 
 
         Icon(
-            Icons.Filled.Edit,"",tint = Color(0xFF4552B8),
+            Icons.Filled.Edit,"",tint = light_green,
             modifier = Modifier
                 .size(40.dp)
                 .clickable { navController.navigate(Screen.contributorScreen.route) }

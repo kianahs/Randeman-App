@@ -1,8 +1,10 @@
 package com.example.atry
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
@@ -27,6 +29,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.atry.data.remote.dto.Resource
+import com.example.atry.ui.theme.dark_purple
+import com.example.atry.ui.theme.light_green
+import com.example.atry.ui.theme.linearGradientBrush
+import com.example.atry.ui.theme.linearGradientBrush2
 import com.example.atry.viewModels.AddResourcesViewModel
 
 
@@ -37,12 +43,12 @@ fun resourceFrom(navController: NavController) {
     var resourceDescriptionState by rememberSaveable { mutableStateOf("") }
     val shape = RoundedCornerShape(topStart = 80.dp)
 
-    Column(modifier = Modifier.background(Color(0xFF4552B8))) {
+    Column(modifier = Modifier.background(linearGradientBrush)) {
 
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.35f)
-            .background(Color(0xFF4552B8))
+            .background(linearGradientBrush)
         )
 
 
@@ -51,6 +57,7 @@ fun resourceFrom(navController: NavController) {
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
+            .border(6.dp, linearGradientBrush2, shape)
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),

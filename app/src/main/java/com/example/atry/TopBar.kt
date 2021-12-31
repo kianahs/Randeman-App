@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.sp
 fun TopBar() {
     TopAppBar(
         title = { Text(text = "Resource Manager", fontSize = 18.sp) },
-        backgroundColor = colorResource(id = R.color.purple_500),
+        backgroundColor = colorResource(id = R.color.purple_one),
         contentColor = Color.White
     )
 }

@@ -27,7 +27,7 @@ fun BottomNavigationBar(navController: NavController) {
     )
     BottomNavigation(
 
-        backgroundColor = colorResource(id = R.color.purple_500),
+        backgroundColor = colorResource(id = R.color.white),
         contentColor = Color.White
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -36,12 +36,13 @@ fun BottomNavigationBar(navController: NavController) {
             BottomNavigationItem(
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title,modifier = Modifier.size(21.dp)) },
                 label = { Text(text = item.title) },
-                selectedContentColor = Color.White,
-                unselectedContentColor = Color.White.copy(0.4f),
+                selectedContentColor = Color(213,210,227),
+                unselectedContentColor = Color(213,210,227),
                 alwaysShowLabel = true,
                 selected = currentRoute == item.route,
                 onClick = {
                     if(item.route == NavigationItem.Home.route ){
+
                         navController.navigate(Screen.featuresScreen.withArgs("ss"))
                     }
                     if(item.route == NavigationItem.Resources.route ){

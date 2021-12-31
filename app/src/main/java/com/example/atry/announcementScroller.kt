@@ -23,6 +23,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.atry.ui.theme.light_green
+import com.example.atry.ui.theme.light_purple
 
 
 @Composable
@@ -42,9 +44,7 @@ fun announcementScroller(navController : NavController) {
 
             buildAnnotatedString {
 //                    append("welcome to ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
-                    0xFF4552B8
-                ), fontSize = 25.sp)
+                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(0xFF000000), fontSize = 25.sp)
                 ) {
                     append("Announcements")
                 }
@@ -54,7 +54,7 @@ fun announcementScroller(navController : NavController) {
 
 
         Icon(
-            Icons.Filled.Add,"",tint = Color(0xFF4552B8),
+            Icons.Filled.Add,"",tint = light_green,
             modifier = Modifier.size(40.dp)
                 .clickable { navController.navigate(Screen.announcementScreen.route) }
 

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.atry.ui.theme.*
 import com.plcoding.ktorclientandroid.data.remote.PostsService
 
 @ExperimentalMaterialApi
@@ -24,13 +25,13 @@ fun seasonsScreen(navController: NavController, id:String?) {
         itemsIndexed(items) { index, item ->
 
             if(index==0)
-                seasons(navController,item,month1,col[index],id)
+                seasons(navController,item,month1, light_gray,id)
             if(index==1)
-                seasons(navController,item,month2,col[index],id)
+                seasons(navController,item,month2, light_purple,id)
             if(index==2)
-                seasons(navController,item,month3,col[index],id)
+                seasons(navController,item,month3, dark_green,id)
             if(index==3)
-                seasons(navController,item,month4,col[index],id)
+                seasons(navController,item,month4, dark_purple,id)
         }
 
     }

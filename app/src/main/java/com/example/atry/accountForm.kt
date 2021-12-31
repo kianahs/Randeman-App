@@ -24,19 +24,25 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.atry.ui.theme.dark_purple
+import com.example.atry.ui.theme.linearGradientBrush
+import com.example.atry.viewModels.GetAccountInfo
 
 
 @Composable
 fun accountForm(featureChoice: String?) {
     val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
     val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val accountInfoViewModel:GetAccountInfo = hiltViewModel()
+    accountInfoViewModel.getAccountInfo()
     val shape = RoundedCornerShape(topStart = 80.dp)
     val shape2 = CircleShape
-    Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.background(linearGradientBrush),horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.10f)
-            .background(Color(0xFF4552B8))
+            .background(linearGradientBrush)
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -47,7 +53,7 @@ fun accountForm(featureChoice: String?) {
                     buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
+                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFF9F9FC), fontSize = 40.sp
                             )
                         ) {
                             append("Edit Profile")
@@ -92,7 +98,7 @@ fun accountForm(featureChoice: String?) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.padding(5.dp))
-                        Icon(Icons.Filled.AddCircle,"photo",tint = Color(0xFFB9BDDA),modifier = Modifier.size(40.dp))
+
 
 
                     }
