@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.atry.companyID
 import com.example.atry.viewModels.stateModels.ResourceListState
 import com.example.atry.data.remote.RetroApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,7 @@ class ResourcesViewModel @Inject constructor(
             try {
                 _state.value = state.value.copy(isLoading = true)
                 _state.value = state.value.copy(
-                    resources = api.getResources(),
+                    resources = api.getResources(companyID),
                     isLoading = false
                 )
 

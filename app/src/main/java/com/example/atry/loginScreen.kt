@@ -35,7 +35,13 @@ fun loginScreen(navController: NavController) {
     var passwordState by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(key1 = loginViewModel.state.value.loginData?.statusCode){
         if(loginViewModel.state.value.loginData?.statusCode == 200)
+        {
+
+            companyID = loginViewModel.state.value.loginData?.company_id!!
             navController.navigate(Screen.featuresScreen.withArgs(loginViewModel.state.value.loginData?.company_id.toString()))
+
+
+        }
 
     }
     Box(

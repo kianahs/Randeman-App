@@ -11,8 +11,8 @@ import retrofit2.Call
 
 
 interface RetroApi {
-    @GET("/resources")
-    suspend fun getResources(): List<Resource>
+    @GET("/resources/{id}")
+    suspend fun getResources(@Path("id") id:Int): List<Resource>
 
     @POST("/addResource")
     suspend fun addResource(@Body resource: Resource):Response<PostResponse>
