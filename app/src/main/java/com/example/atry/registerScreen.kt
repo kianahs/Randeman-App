@@ -126,7 +126,8 @@ fun registerScreen(navController: NavController){
                     ),onClick = {
                         val registerData = Register(firstnameState,lastnameState,EmailState,passwordState,selectedType)
                         registerViewModel.register(registerData)
-                        navController.navigate(Screen.featuresScreen.withArgs(firstnameState))}) {
+                        navController.navigate(Screen.loginScreen.route)
+                        }) {
                         Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Register")
 
                     }
