@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun activityCircle(modifier: Modifier, content:String, caption: String){
-    Column(modifier = Modifier.padding(5.dp)) {
+    Column(modifier = Modifier.padding(5.dp),horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier

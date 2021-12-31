@@ -2,6 +2,7 @@ package com.example.atry
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.widget.DatePicker
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -76,6 +77,15 @@ public fun currentRoute(navController: NavHostController): String? {
 fun Navigation(){
     val notBar = arrayOf("login_screen","register_screen")
     val navController = rememberNavController()
+
+//    val context = LocalContext.current
+//    val channelId = "Randeman"
+//    val notificationId = 0
+//    val myBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.logop75)
+//    val bigText = "this is notification content in randeman app"
+//    LaunchedEffect(Unit) {
+//        createNotificationChannel(channelId, context)
+//    }
 
     Scaffold(
         topBar ={if (currentRoute(navController = navController) !in notBar )  TopBar() },
@@ -190,7 +200,11 @@ fun Navigation(){
                 FAQScreen(navController = navController)
             }
             composable(route = Screen.announcementScreen.route) {
-                announcementScreen(navController = navController)
+                announcementScreen(navController = navController,
+//                    context,
+//                    channelId,
+//                    notificationId
+                )
             }
 
         }
