@@ -7,11 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +33,17 @@ fun loginScreen(navController: NavController) {
     val loginViewModel: LoginViewModel = hiltViewModel()
     var usernameState by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf("") }
+    LaunchedEffect(key1 = loginViewModel.state.value.loginData?.statusCode){
+        if(loginViewModel.state.value.loginData?.statusCode == 200)
+        {
+
+            companyID = loginViewModel.state.value.loginData?.company_id!!
+            navController.navigate(Screen.featuresScreen.withArgs(loginViewModel.state.value.loginData?.company_id.toString()))
+
+
+        }
+
+    }
     Box(
         modifier = Modifier
             .background(Color(0xFF6C5DBD))
@@ -90,7 +98,25 @@ fun loginScreen(navController: NavController) {
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                     )
+
+                    if(loginViewModel.state.value.loginData?.statusCode == 401){
+                        Text(
+                            buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+                                    0xFFFF0000
+                                ), fontSize = 12.sp)
+                                ) {
+                                    append("Invalid Email or Password")
+                                }
+                            },
+                            modifier = Modifier.clickable {
+
+                                navController.navigate(Screen.loginScreen.route) }
+                        )
+
+                    }
                     Spacer(modifier = Modifier.padding(15.dp))
+
                     Button(modifier = Modifier.size(250.dp, 50.dp),
                         shape = RoundedCornerShape(50),
                         colors = ButtonDefaults.buttonColors(
@@ -101,7 +127,7 @@ fun loginScreen(navController: NavController) {
                         onClick = {
                             val loginData: Login = Login(usernameState, passwordState)
                             loginViewModel.login(loginData = loginData)
-                            navController.navigate(Screen.featuresScreen.withArgs(usernameState))
+//                            navController.navigate(Screen.featuresScreen.withArgs(usernameState))
                         }) {
                         Text(fontWeight = FontWeight.Bold, color = Color.White, text = "Login")
 
@@ -115,7 +141,6 @@ fun loginScreen(navController: NavController) {
             Spacer(modifier = Modifier.padding(10.dp))
             Text(
                 buildAnnotatedString {
-//                    append("welcome to ")
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.ExtraBold, color = Color(
@@ -128,6 +153,7 @@ fun loginScreen(navController: NavController) {
                 },
                 modifier = Modifier.clickable { navController.navigate(Screen.registerScreen.route) }
             )
+
 
         }
 

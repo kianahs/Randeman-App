@@ -5,5 +5,6 @@ data class Resource(
     val _id: String,
     val description: String,
     val name: String,
-    val unique_id: Int
+    val unique_id: Int,
+    val company_id:Int
 )
