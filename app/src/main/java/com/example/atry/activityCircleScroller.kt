@@ -1,5 +1,6 @@
 package com.example.atry
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -7,11 +8,31 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.atry.viewModels.GetCompanyInformation
 
 @Composable
 fun activityCircleScroller() {
-    val items = listOf("Tasks","Resources","Contributors","Announcements")
 
+    val getStatistics : GetCompanyInformation = hiltViewModel()
+    getStatistics.getCompanyInfo(companyID)
+
+    val items = listOf(
+        getStatistics.state.value.informations?.let { StatisticsStructure("Tasks", it.taskCount) },
+        getStatistics.state.value.informations?.let {
+            StatisticsStructure("Resources",
+                it.resourceCount)
+        },
+        getStatistics.state.value.informations?.let {
+            StatisticsStructure("Contributors",
+                it.ContributorCount)
+        }
+        ,
+        getStatistics.state.value.informations?.let {
+            StatisticsStructure("Announcements",
+                it.announcementCount)
+        })
+    Log.e("resources", getStatistics.state.value.informations?.resourceCount.toString())
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -19,7 +40,9 @@ fun activityCircleScroller() {
 
         ) {
         itemsIndexed(items) { index, item ->
-            activityCircle( modifier= Modifier,"10",item)
+            if (item != null) {
+                activityCircle( modifier= Modifier,item.getStatisticsValue().toString(),item.getStatisticsName())
+            }
         }
 
     }
