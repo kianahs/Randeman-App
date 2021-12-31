@@ -32,7 +32,7 @@ class GetCompanyInformation @Inject constructor(
                 _state.value = state.value.copy(isLoading = true)
                 delay(2000)
                 _state.value = state.value.copy(
-                    informations = api.getCompanyInfo(companyID),
+                    informations = api.getCompanyInfo(id),
                     isLoading = false
                 )
                 dataLoaded.value = true
