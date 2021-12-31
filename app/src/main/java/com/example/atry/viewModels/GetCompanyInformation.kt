@@ -25,7 +25,7 @@ class GetCompanyInformation @Inject constructor(
     val dataLoaded = mutableStateOf(false)
 
 
-    fun getCompanyInfo(id:Int){
+    fun getCompanyInfo(){
         viewModelScope.launch {
             loading.value = true
             try {
