@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -32,10 +33,17 @@ import com.example.atry.viewModels.GetAccountInfo
 
 @Composable
 fun accountForm(featureChoice: String?) {
-    val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
-    val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
-    val accountInfoViewModel:GetAccountInfo = hiltViewModel()
+
+    val firstNameState = remember { mutableStateOf("") }
+    val lastNameState = remember { mutableStateOf("") }
+    val EmailState = remember { mutableStateOf("") }
+    val companyState = remember { mutableStateOf("") }
+    val accountInfoViewModel: GetAccountInfo = hiltViewModel()
     accountInfoViewModel.getAccountInfo()
+    firstNameState.value = accountInfoViewModel.state.value.informations!!.firstname
+    lastNameState.value = accountInfoViewModel.state.value.informations!!.lastname
+    companyState.value = accountInfoViewModel.state.value.informations!!.company_id.toString()
+    EmailState.value = accountInfoViewModel.state.value.informations!!.email
     val shape = RoundedCornerShape(topStart = 80.dp)
     val shape2 = CircleShape
     Column(modifier = Modifier.background(linearGradientBrush),horizontalAlignment = Alignment.CenterHorizontally) {
@@ -56,7 +64,7 @@ fun accountForm(featureChoice: String?) {
                                 fontWeight = FontWeight.ExtraBold, color = Color(0xFFF9F9FC), fontSize = 40.sp
                             )
                         ) {
-                            append("Edit Profile")
+                            append("Profile")
                         }
                     }
                 )
@@ -103,15 +111,57 @@ fun accountForm(featureChoice: String?) {
 
                     }
                 }
-                textInput(textFieldName = "Your name", true)
+
+                OutlinedTextField(
+                    value = firstNameState.value,
+                    onValueChange = {
+                        firstNameState.value = it
+                    },
+                    label = { Text("First Name") },
+                    enabled = false,
+                    singleLine = true
+                )
+
+//                textInput(textFieldName = "Your name", true)
                 Spacer(modifier = Modifier.padding(5.dp))
-                textInput(textFieldName = "Username",true)
+                OutlinedTextField(
+                    value = lastNameState.value,
+                    onValueChange = {
+                        lastNameState.value = it
+                    },
+                    label = { Text("Last Name") },
+                    enabled = false,
+                    singleLine = true
+                )
+
+//                textInput(textFieldName = "Username",true)
                 Spacer(modifier = Modifier.padding(5.dp))
-                textInput(textFieldName = "Password", false)
+                OutlinedTextField(
+                    value = EmailState.value,
+                    onValueChange = {
+                        EmailState.value = it
+                    },
+                    label = { Text("Email") },
+                    enabled = false,
+                    singleLine = true
+                )
+
+//                textInput(textFieldName = "Password", false)
                 Spacer(modifier = Modifier.padding(5.dp))
-                textInput(textFieldName = "Company name", true)
+                OutlinedTextField(
+                    value = companyState.value,
+                    onValueChange = {
+                        companyState.value = it
+                    },
+                    label = { Text("Company ID") },
+                    enabled = false,
+                    singleLine = true
+                )
+
+
+
                 Spacer(modifier = Modifier.padding(0.5.dp))
-                Icon(Icons.Outlined.CheckCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(40.dp))
+//                Icon(Icons.Outlined.CheckCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(40.dp))
 
 
             }

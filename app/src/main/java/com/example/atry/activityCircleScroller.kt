@@ -32,7 +32,7 @@ fun activityCircleScroller() {
             StatisticsStructure("Announcements",
                 it.announcementCount)
         })
-    Log.e("resources", getStatistics.state.value.informations?.resourceCount.toString())
+//    Log.e("resources", getStatistics.state.value.informations?.resourceCount.toString())
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
