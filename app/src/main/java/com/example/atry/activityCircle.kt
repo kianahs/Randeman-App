@@ -21,6 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.atry.ui.theme.light_gray
+import com.example.atry.ui.theme.light_green
+import com.example.atry.ui.theme.light_purple
+import com.example.atry.ui.theme.linearGradientBrush
 
 @Composable
 fun activityCircle(modifier: Modifier, content:String, caption: String){
@@ -30,8 +34,8 @@ fun activityCircle(modifier: Modifier, content:String, caption: String){
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFF3F3F3))
-                .shadow(elevation = 80.dp).border(2.dp, Color.LightGray, CircleShape),
+                .background(Color(0xFFF3F3F1))
+               .border(4.dp, linearGradientBrush, CircleShape),
 
 
 
@@ -41,8 +45,8 @@ fun activityCircle(modifier: Modifier, content:String, caption: String){
 
                 buildAnnotatedString {
 //                    append("welcome to ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
-                        0xFF4552B8
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, color = Color(
+                        0xFF000000
                     ), fontSize = 25.sp)
                     ) {
                         append(content)
@@ -54,7 +58,9 @@ fun activityCircle(modifier: Modifier, content:String, caption: String){
         Text(
             buildAnnotatedString {
 //                    append("welcome to ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color(0xFF4552B8), fontSize = 15.sp)
+                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = Color(
+                    0xFF000000
+                ), fontSize = 15.sp)
                 ) {
                     append(caption)
                 }

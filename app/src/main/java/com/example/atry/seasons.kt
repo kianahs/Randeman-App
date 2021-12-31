@@ -24,7 +24,7 @@ import androidx.navigation.NavController
 
 @ExperimentalMaterialApi
 @Composable
-fun seasons(navController: NavController, name :String, d : List<String>, col : Long, id:String?) {
+fun seasons(navController: NavController, name :String, d : List<String>, col : Color, id:String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,7 +32,7 @@ fun seasons(navController: NavController, name :String, d : List<String>, col : 
         ,
         elevation = 10.dp,
         shape = RoundedCornerShape(15.dp),
-        backgroundColor = Color(col)
+        backgroundColor = col
 
 
     ) {
@@ -77,7 +77,7 @@ fun seasons(navController: NavController, name :String, d : List<String>, col : 
                                         )
                                     }
                             ) {
-                                Text("  "+d.get(index),color = Color(col),fontFamily = FontFamily.Serif,fontSize = 18.sp,fontWeight = FontWeight.ExtraBold) // card's content
+                                Text("  "+d.get(index),color = col,fontFamily = FontFamily.Serif,fontSize = 18.sp,fontWeight = FontWeight.ExtraBold) // card's content
 
 
                             }

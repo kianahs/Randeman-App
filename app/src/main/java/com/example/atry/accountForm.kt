@@ -24,6 +24,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.atry.ui.theme.dark_purple
+import com.example.atry.ui.theme.linearGradientBrush
 
 
 @Composable
@@ -32,11 +34,11 @@ fun accountForm(featureChoice: String?) {
     val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
     val shape = RoundedCornerShape(topStart = 80.dp)
     val shape2 = CircleShape
-    Column(modifier = Modifier.background(Color(0xFF8579C4)),horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.background(linearGradientBrush),horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.10f)
-            .background(Color(0xFF8579C4))
+            .background(linearGradientBrush)
         ){
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -92,7 +94,7 @@ fun accountForm(featureChoice: String?) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.padding(5.dp))
-                        Icon(Icons.Filled.AddCircle,"photo",tint = Color(0xFFB9BDDA),modifier = Modifier.size(40.dp))
+
 
 
                     }

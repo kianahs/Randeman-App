@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.atry.ui.theme.light_green
+import com.example.atry.ui.theme.light_purple
 
 
 @Composable
@@ -37,7 +39,7 @@ fun contributor(modifier: Modifier = Modifier, name:String){
         Row(Modifier.padding(10.dp)) {
 
             Icon(
-                Icons.Filled.Person,"",tint = Color(0xFF6C5DBD),
+                Icons.Filled.Person,"",tint = light_purple,
                 modifier = Modifier
                     .fillMaxWidth()
                     .size(100.dp)
