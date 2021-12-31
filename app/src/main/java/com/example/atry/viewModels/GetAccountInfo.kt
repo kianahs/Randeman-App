@@ -37,7 +37,7 @@ class GetAccountInfo @Inject constructor(
                     informations = api.getAccountInfo(userID),
                     isLoading = false
                 )
-                
+
                 dataLoaded.value = true
 
             loading.value = false
