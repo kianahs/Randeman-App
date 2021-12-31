@@ -24,14 +24,18 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.atry.ui.theme.dark_purple
 import com.example.atry.ui.theme.linearGradientBrush
+import com.example.atry.viewModels.GetAccountInfo
 
 
 @Composable
 fun accountForm(featureChoice: String?) {
     val resourceNameState = remember { mutableStateOf(TextFieldValue()) }
     val resourceDescriptionState = remember { mutableStateOf(TextFieldValue()) }
+    val accountInfoViewModel:GetAccountInfo = hiltViewModel()
+    accountInfoViewModel.getAccountInfo()
     val shape = RoundedCornerShape(topStart = 80.dp)
     val shape2 = CircleShape
     Column(modifier = Modifier.background(linearGradientBrush),horizontalAlignment = Alignment.CenterHorizontally) {

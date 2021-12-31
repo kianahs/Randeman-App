@@ -29,6 +29,9 @@ interface RetroApi {
     @GET("/companyInformation/{id}")
     suspend fun getCompanyInfo(@Path("id") id: Int?):CompanyInformation
 
+    @GET("/getAccountInfo/{id}")
+    suspend fun getAccountInfo(@Path("id") id: Int?):accountInfo
+
     @POST ("/login")
     suspend fun login(@Body loginData: Login):LoginData
 
