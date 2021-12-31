@@ -64,7 +64,7 @@ fun accountForm(featureChoice: String?) {
                                 fontWeight = FontWeight.ExtraBold, color = Color(0xFFF9F9FC), fontSize = 40.sp
                             )
                         ) {
-                            append("Edit Profile")
+                            append("Profile")
                         }
                     }
                 )
@@ -153,7 +153,7 @@ fun accountForm(featureChoice: String?) {
                     onValueChange = {
                         companyState.value = it
                     },
-                    label = { Text("Resource ID") },
+                    label = { Text("Company ID") },
                     enabled = false,
                     singleLine = true
                 )
@@ -161,7 +161,7 @@ fun accountForm(featureChoice: String?) {
 
 
                 Spacer(modifier = Modifier.padding(0.5.dp))
-                Icon(Icons.Outlined.CheckCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(40.dp))
+//                Icon(Icons.Outlined.CheckCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(40.dp))
 
 
             }
