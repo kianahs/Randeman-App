@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,6 +27,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.atry.ui.theme.linearGradientBrush
+import com.example.atry.ui.theme.linearGradientBrush_reverse
 
 
 @ExperimentalMaterialApi
@@ -48,56 +51,48 @@ fun announcementScreen(navController: NavController,
     var announcementNameState by rememberSaveable{ mutableStateOf("") }
     val shape = RoundedCornerShape( 50.dp)
     val shape2 = CircleShape
-    Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.3f)
-            .background(Color(0xFF4552B8))
+            .fillMaxHeight()
+            .background(linearGradientBrush_reverse)
 
         ){
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                Icon(
+                    Icons.Filled.Notifications,"",tint = Color(0xFFFFFFFF),
+                    modifier = Modifier
+                        .size(100.dp)
+                        .padding(5.dp)
+                )
+
                 Text(
                     buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFABA0E7), fontSize = 40.sp
+                                fontWeight = FontWeight.ExtraBold, color = Color(0xFFFFFFFF), fontSize = 40.sp
                             )
                         ) {
                             append("Add Announcement")
                         }
                     }
                 )
-            }
-        }
-        Box(modifier = Modifier
-            .clip(shape)
-            .border(BorderStroke(15.dp, color = Color(0xFFFFFFFF)))
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f)
-            .background(Color.White)
-        ){
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-
-                )
-                OutlinedTextField(
+                Spacer(modifier = Modifier.padding(15.dp))
+                TextField(
                     value = announcementNameState,
                     onValueChange = {
                         announcementNameState = it
                     },
+                    colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
                     label = { Text("Announcement") },
-                    singleLine = true
+                    modifier = Modifier.fillMaxWidth(0.7f).fillMaxHeight(0.2f)
+
+
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
 
@@ -122,16 +117,10 @@ fun announcementScreen(navController: NavController,
 //                    )
 
                 }
-
-
             }
-
         }
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color(0xFF4552B8))
-        )
+
+
 
 
 
