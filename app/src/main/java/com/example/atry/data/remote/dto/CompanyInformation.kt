@@ -5,5 +5,6 @@ data class CompanyInformation(
     val announcementCount: Int,
     val contributors: List<String>,
     val resourceCount: Int,
-    val taskCount: Int
+    val taskCount: Int,
+    val announcements: List<String>
 )
