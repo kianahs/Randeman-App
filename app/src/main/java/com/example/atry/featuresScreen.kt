@@ -59,11 +59,11 @@ fun featuresScreen (name:String?, navController: NavController){
 
         activityCircleScroller(statistics.state.value.informations!!.taskCount,statistics.state.value.informations!!.resourceCount,statistics.state.value.informations!!.ContributorCount,statistics.state.value.informations!!.announcementCount)
         Spacer(modifier = Modifier.padding(20.dp))
-        contributorScroller(navController = navController)
+        contributorScroller(navController = navController,statistics.state.value.informations!!.contributors)
         Spacer(modifier = Modifier.padding(20.dp))
         announcementScroller(navController = navController, statistics.state.value.informations!!.announcements)
         Spacer(modifier = Modifier.padding(20.dp))
-        statisticsChips()
+//        statisticsChips()
 
     }
 
