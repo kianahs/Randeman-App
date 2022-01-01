@@ -38,6 +38,9 @@ interface RetroApi {
     @POST ("/register")
     suspend fun register(@Body registerData: Register):Response<PostResponse>
 
+    @POST("/addContributor/{id}")
+    suspend fun addContributor(@Path("id") id: Int?,@Query("email") email:String):Response<PostResponse>
+
     @GET ("/getDaysOfMonth")
     suspend fun getDayOfMonth(@Query("month") month:String):List<DayInfo>
 

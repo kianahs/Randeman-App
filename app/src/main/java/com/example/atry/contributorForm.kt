@@ -21,15 +21,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.atry.ui.theme.linearGradientBrush
 import com.example.atry.ui.theme.linearGradientBrush_reverse
+import com.example.atry.viewModels.AddContributorViewModel
 
 
 @Composable
 fun contributorForm(navController: NavController) {
-    var passwordState by rememberSaveable { mutableStateOf("") }
+    var emailState by rememberSaveable { mutableStateOf("") }
     val shape = RoundedCornerShape(topStart = 80.dp)
+    val addContributorViewModel:AddContributorViewModel = hiltViewModel()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier
@@ -57,8 +60,8 @@ fun contributorForm(navController: NavController) {
                 Spacer(modifier = Modifier.padding(5.dp))
 
                 TextField(
-                    value = passwordState,
-                    onValueChange = { passwordState = it },
+                    value = emailState,
+                    onValueChange = { emailState = it },
                     colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
                     label = { Text("User Email Address") },
 
@@ -68,6 +71,8 @@ fun contributorForm(navController: NavController) {
                     0xFF6C5DBD
                 )
                 ),onClick = {
+
+                    addContributorViewModel.addContributor(emailState)
                     navController.navigate(Screen.featuresScreen.withArgs("ss"))
                 }) {
                     Text(fontWeight = FontWeight.Bold,color = Color.White,text = "Grant Access")
