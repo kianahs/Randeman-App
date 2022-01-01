@@ -33,6 +33,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.atry.Date
 import com.example.atry.data.remote.dto.Task
+import com.example.atry.ui.theme.dark_green
+import com.example.atry.ui.theme.linearGradientBrush_purple
 import com.example.atry.viewModels.AddTaskViewModel
 import java.util.*
 
@@ -47,23 +49,18 @@ fun taskForm(navController : NavController, resourceID:String?){
     deadlineState = "3434"
     val context = LocalContext.current
     val shape = RoundedCornerShape(topStart = 80.dp)
-    Column(modifier = Modifier.background(Color(0xFF4552B8))) {
+    Column(modifier = Modifier.background(linearGradientBrush_purple)) {
 
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.1f)
-            .background(Color(0xFF4552B8))
+            .background(linearGradientBrush_purple)
         ){
             Row(modifier= Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                Icon(
-                    Icons.Filled.AccountCircle,"",tint = Color.White,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clickable { navController.navigate(Screen.accountFormScreen.route) }
-                )
+
 //
 
             }
@@ -80,8 +77,9 @@ fun taskForm(navController : NavController, resourceID:String?){
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
+                Spacer(modifier = Modifier.padding(7.dp))
                 Row(){
+
                     Text(
                         buildAnnotatedString {
 //                    append("welcome to ")
@@ -91,15 +89,11 @@ fun taskForm(navController : NavController, resourceID:String?){
                             }
                         }
                     )
-                    Icon(
-                        Icons.Filled.CheckCircle,"",tint = Color(0xFF4552B8),
-                        modifier = Modifier.size(50.dp)
 
-                    )
 
 
                 }
-                Spacer(modifier = Modifier.padding(15.dp))
+                Spacer(modifier = Modifier.padding(10.dp))
                 OutlinedTextField(
                     value = taskNameState,
                     onValueChange = {
@@ -189,9 +183,9 @@ fun taskForm(navController : NavController, resourceID:String?){
                         singleLine = true
                     )
                 }
-                Spacer(modifier = Modifier.padding(15.dp))
+                Spacer(modifier = Modifier.padding(3.dp))
                 Icon(
-                    Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),modifier = Modifier
+                    Icons.Filled.AddCircle,"",tint = dark_green,modifier = Modifier
                     .size(130.dp)
                     .padding(bottom = 50.dp)
                     .clickable {

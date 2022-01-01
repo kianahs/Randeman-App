@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.atry.ui.theme.light_green
 import com.example.atry.viewModels.GetDayViewModel
 import com.example.atry.viewModels.GetTaskViewModel
 
@@ -114,7 +115,7 @@ fun tasksScreen(navController: NavController, id:String?, month:String?){
             Box(){
                 Row() {
                     Icon(
-                        Icons.Filled.Info,"",tint = Color(0xFF4552B8),
+                        Icons.Filled.Info,"",tint = light_green,
                         modifier = Modifier
                             .size(40.dp)
                             .padding(top = 20.dp)
@@ -131,7 +132,7 @@ fun tasksScreen(navController: NavController, id:String?, month:String?){
 
     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.End , modifier = Modifier.fillMaxSize()){
         Icon(
-            Icons.Filled.AddCircle,"",tint = Color(0xFF4552B8),
+            Icons.Filled.AddCircle,"",tint = light_green,
             modifier = Modifier
                 .size(130.dp)
                 .padding(bottom = 50.dp)
