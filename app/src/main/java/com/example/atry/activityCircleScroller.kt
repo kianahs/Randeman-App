@@ -12,26 +12,26 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.atry.viewModels.GetCompanyInformation
 
 @Composable
-fun activityCircleScroller() {
+fun activityCircleScroller(taskCount:Int,resourceCount:Int,contributorCount:Int,announcementCount:Int) {
 
     val getStatistics : GetCompanyInformation = hiltViewModel()
     getStatistics.getCompanyInfo()
 
     val items = listOf(
-        getStatistics.state.value.informations?.let { StatisticsStructure("Tasks", it.taskCount) },
-        getStatistics.state.value.informations?.let {
+        StatisticsStructure("Tasks", taskCount) ,
+
             StatisticsStructure("Resources",
-                it.resourceCount)
-        },
-        getStatistics.state.value.informations?.let {
-            StatisticsStructure("Contributors",
-                it.ContributorCount)
-        }
+                resourceCount)
         ,
-        getStatistics.state.value.informations?.let {
+
+            StatisticsStructure("Contributors",
+                contributorCount)
+
+        ,
+
             StatisticsStructure("Announcements",
-                it.announcementCount)
-        })
+                announcementCount)
+        )
 //    Log.e("resources", getStatistics.state.value.informations?.resourceCount.toString())
     LazyRow(
         modifier = Modifier
