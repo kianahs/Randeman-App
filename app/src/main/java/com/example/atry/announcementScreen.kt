@@ -100,7 +100,8 @@ fun announcementScreen(navController: NavController,
                         announcementNameState = it
                     },
                     label = { Text("Announcement") },
-                    singleLine = true
+                    
+
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
 
