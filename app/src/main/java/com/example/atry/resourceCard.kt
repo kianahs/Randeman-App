@@ -70,6 +70,7 @@ fun resourceCard(navController: NavController, id:Int, resourceName:String, desc
                     append(description)
                 }
             })
+            icon_shape()
         }
 
 

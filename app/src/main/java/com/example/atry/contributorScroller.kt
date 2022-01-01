@@ -19,13 +19,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+
+import com.example.atry.viewModels.GetCompanyInformation
+
 import com.example.atry.ui.theme.light_green
 import com.example.atry.ui.theme.light_purple
 
+
 @Composable
 fun contributorScroller(navController: NavController) {
-    val items = listOf("Mina","Erfan","Kiana")
+    val contributors : GetCompanyInformation = hiltViewModel()
+    contributors.getCompanyInfo()
+    var items = listOf("")
+    if (contributors.state.value.informations?.contributors.isNullOrEmpty() == false){
+        items = contributors.state.value.informations!!.contributors
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top,

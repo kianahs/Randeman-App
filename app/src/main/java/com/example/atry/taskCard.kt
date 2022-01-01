@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,6 +68,8 @@ fun taskCard(modifier: Modifier = Modifier, task: Task){
                         append("ended at:"+task.endedAt.toString()+"\n")
                     }
                 })
+                Icon(Icons.Filled.Delete,"",tint = Color(0xFFFFFFFF),modifier = Modifier.size(35.dp).padding(end = 10.dp))
+
             }
             Column() {
                 Image(painter = painterResource(id = R.drawable.task), contentDescription = null ,

@@ -64,7 +64,7 @@ import java.util.*
 
 
 var selectedDay = mutableStateOf(1)
-var userID = mutableStateOf(-1)
+var userID = -1
 //var companyID = mutableStateOf(-1)
 var companyID = -1
 @Composable
