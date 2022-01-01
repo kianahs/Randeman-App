@@ -41,6 +41,9 @@ interface RetroApi {
     @POST("/addContributor/{id}")
     suspend fun addContributor(@Path("id") id: Int?,@Query("email") email:String):Response<PostResponse>
 
+    @POST("/addAnnouncements/{id}")
+    suspend fun addAnnouncement(@Path("id") id: Int?,@Query("announcement") announcement:String):Response<PostResponse>
+
     @GET ("/getDaysOfMonth")
     suspend fun getDayOfMonth(@Query("month") month:String):List<DayInfo>
 

@@ -25,7 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.atry.viewModels.AddannouncementViewModel
 
 
 @ExperimentalMaterialApi
@@ -47,6 +49,7 @@ fun announcementScreen(navController: NavController,
 
     var announcementNameState by rememberSaveable{ mutableStateOf("") }
     val shape = RoundedCornerShape( 50.dp)
+    val addannouncementViewModel:AddannouncementViewModel = hiltViewModel()
     val shape2 = CircleShape
     Column(modifier = Modifier.background(Color(0xFF4552B8)),horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier
@@ -105,6 +108,7 @@ fun announcementScreen(navController: NavController,
                     0xFF6C5DBD
                 )
                 ),onClick = {
+                    addannouncementViewModel.addAnnouncement(announcementNameState)
                     navController.navigate(Screen.featuresScreen.withArgs("ss"))
                     simpleNotificationWithTopAction(
                         context,
