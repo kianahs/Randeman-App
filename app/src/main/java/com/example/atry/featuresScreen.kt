@@ -44,18 +44,18 @@ fun featuresScreen (name:String?, navController: NavController){
     Column( modifier = Modifier.fillMaxSize()
 //        .verticalScroll(rememberScrollState())
     ) {
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
-                    0xFFFF0000
-                ), fontSize = 12.sp)
-                ) {
-                    append("Company ID : ")
-                    append(companyID.toString())
-                }
-            },
-
-        )
+//        Text(
+//            buildAnnotatedString {
+//                withStyle(style = SpanStyle(fontWeight = FontWeight.ExtraBold, color = Color(
+//                    0xFFFF0000
+//                ), fontSize = 12.sp)
+//                ) {
+//                    append("Company ID : ")
+//                    append(companyID.toString())
+//                }
+//            },
+//
+//        )
 
         activityCircleScroller(statistics.state.value.informations!!.taskCount,statistics.state.value.informations!!.resourceCount,statistics.state.value.informations!!.ContributorCount,statistics.state.value.informations!!.announcementCount)
         Spacer(modifier = Modifier.padding(20.dp))

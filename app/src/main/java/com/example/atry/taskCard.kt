@@ -68,7 +68,7 @@ fun taskCard(modifier: Modifier = Modifier, task: Task){
                         append("ended at:"+task.endedAt.toString()+"\n")
                     }
                 })
-                Icon(Icons.Filled.Delete,"",tint = Color(0xFFFFFFFF),modifier = Modifier.size(35.dp).padding(end = 10.dp))
+               // Icon(Icons.Filled.Delete,"",tint = Color(0xFFFFFFFF),modifier = Modifier.size(35.dp).padding(end = 10.dp))
 
             }
             Column() {
