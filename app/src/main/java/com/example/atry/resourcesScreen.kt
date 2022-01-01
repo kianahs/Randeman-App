@@ -8,6 +8,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
@@ -39,7 +40,7 @@ fun  resourcesScreen(navController: NavController, featureChoice:String?){
 
         itemsIndexed(viewModel.state.value.resources){index, item ->
             resourceCard(navController = navController,item.unique_id,item.name,item.description, Modifier.fillMaxSize(),{
-                Icon(Icons.Filled.Settings,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp))
+                Icon(Icons.Filled.Delete,"",tint = Color(0xFF4552B8),modifier = Modifier.size(40.dp).padding(end = 10.dp))
             })
         }
     }

@@ -25,7 +25,7 @@ fun seasonsScreen(navController: NavController, id:String?) {
         itemsIndexed(items) { index, item ->
 
             if(index==0)
-                seasons(navController,item,month1, light_gray,id)
+                seasons(navController,item,month1, light_green2,id)
             if(index==1)
                 seasons(navController,item,month2, light_purple,id)
             if(index==2)
