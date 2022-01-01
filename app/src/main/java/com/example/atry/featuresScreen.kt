@@ -16,13 +16,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.atry.viewModels.GetCompanyInformation
 
 
 @ExperimentalMaterialApi
 @Composable
 fun featuresScreen (name:String?, navController: NavController){
-
+    val statistics: GetCompanyInformation = hiltViewModel()
+    statistics.getCompanyInfo()
 //    LazyColumn() {
 //        itemsIndexed(
 //            listOf<cardStructure>(
@@ -54,11 +57,11 @@ fun featuresScreen (name:String?, navController: NavController){
 
         )
 
-        activityCircleScroller()
+        activityCircleScroller(statistics.state.value.informations!!.taskCount,statistics.state.value.informations!!.resourceCount,statistics.state.value.informations!!.ContributorCount,statistics.state.value.informations!!.announcementCount)
         Spacer(modifier = Modifier.padding(20.dp))
         contributorScroller(navController = navController)
         Spacer(modifier = Modifier.padding(20.dp))
-        announcementScroller(navController = navController)
+        announcementScroller(navController = navController, statistics.state.value.informations!!.announcements)
         Spacer(modifier = Modifier.padding(20.dp))
         statisticsChips()
 

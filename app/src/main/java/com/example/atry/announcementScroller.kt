@@ -22,17 +22,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.atry.ui.theme.light_green
 import com.example.atry.ui.theme.light_purple
 
 
 @Composable
-fun announcementScroller(navController : NavController) {
-    val items = listOf("changing plan","repairing CNC","session decisi","calculate fund",
-        "changing plan","repairing CNC","session decisi","calculate fund",
-        "changing plan","repairing CNC","session decisi","calculate fund",
-        "changing plan","repairing CNC","session decisi","calculate fund",)
+fun announcementScroller(navController : NavController, statistics: List<String>) {
+    var items = listOf<String>()
+    if(statistics.isNullOrEmpty()==false){
+        items = statistics
+    }
+
 
     Row(
         modifier = Modifier.fillMaxWidth(),
