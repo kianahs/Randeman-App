@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.atry.ui.theme.light_purple
 import com.example.atry.ui.theme.linearGradientBrush
 import com.example.atry.ui.theme.linearGradientBrush_reverse
 import com.example.atry.viewModels.AddContributorViewModel
@@ -42,10 +45,17 @@ fun contributorForm(navController: NavController) {
             .background(linearGradientBrush_reverse)
         ){
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Icon(
+                    Icons.Filled.Person,"",tint = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(100.dp)
+                )
+
                 Text(
                     buildAnnotatedString {
                         withStyle(
@@ -57,7 +67,7 @@ fun contributorForm(navController: NavController) {
                         }
                     }
                 )
-                Spacer(modifier = Modifier.padding(5.dp))
+                Spacer(modifier = Modifier.padding(15.dp))
 
                 TextField(
                     value = emailState,

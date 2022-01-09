@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Person
@@ -26,13 +24,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.atry.data.remote.dto.Login
 import com.example.atry.ui.theme.dark_purple
 import com.example.atry.ui.theme.linearGradientBrush
 import com.example.atry.viewModels.GetAccountInfo
 
 
 @Composable
-fun accountForm(featureChoice: String?) {
+fun accountForm(featureChoice: String?,navController: NavController) {
 
     val firstNameState = remember { mutableStateOf("") }
     val lastNameState = remember { mutableStateOf("") }
@@ -160,7 +160,18 @@ fun accountForm(featureChoice: String?) {
 
 
 
-                Spacer(modifier = Modifier.padding(0.5.dp))
+                Spacer(modifier = Modifier.padding(5.dp))
+                Button(modifier = Modifier.size(175.dp, 40.dp),
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(0xFFB31A1A)
+                    ),
+                    onClick = {
+                            navController.navigate(Screen.loginScreen.route)
+                    }) {
+                    Text(fontWeight = FontWeight.Bold, color = Color.White, text = "Log out")
+
+                }
 //                Icon(Icons.Outlined.CheckCircle,"",tint = Color(0xFF626CC2),modifier = Modifier.size(40.dp))
 
 

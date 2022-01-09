@@ -29,12 +29,11 @@ import com.example.atry.ui.theme.light_purple
 
 
 @Composable
-fun contributorScroller(navController: NavController) {
-    val contributors : GetCompanyInformation = hiltViewModel()
-    contributors.getCompanyInfo()
+fun contributorScroller(navController: NavController, contributors: List<String>) {
+
     var items = listOf("")
-    if (contributors.state.value.informations?.contributors.isNullOrEmpty() == false){
-        items = contributors.state.value.informations!!.contributors
+    if (contributors.isNullOrEmpty() == false){
+        items = contributors
     }
 
     Row(

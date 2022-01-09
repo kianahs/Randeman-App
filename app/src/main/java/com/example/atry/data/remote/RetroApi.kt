@@ -47,6 +47,9 @@ interface RetroApi {
     @GET ("/getDaysOfMonth")
     suspend fun getDayOfMonth(@Query("month") month:String):List<DayInfo>
 
+    @POST ("/deleteResource/{id}")
+    suspend fun deleteResource(@Path("id") id: Int?):Response<PostResponse>
+
 
     companion object{
         const val BASE_URL = "https://api-resource-manager.fandogh.cloud"

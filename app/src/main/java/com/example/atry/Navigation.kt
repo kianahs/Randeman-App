@@ -147,7 +147,7 @@ fun Navigation(){
                     }
                 )
             ) { entry ->
-                accountForm(featureChoice = entry.arguments?.getString("title"))
+                accountForm(featureChoice = entry.arguments?.getString("title"),navController = navController)
 
             }
             composable(
